@@ -4,21 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Ben-Bot - Pour parler avec ton mari 🤖</title>
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Ben-Bot">
     <link rel="apple-touch-icon" sizes="180x180" href="images/Ben-Bot.png">
     <link rel="icon" href="images/Ben-Bot.png" type="image/png">    <meta name="theme-color" content="#667eea">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://js.puter.com/v2/"></script>
-    <style>
+    <script src="https://cdn.jsdelivr.net/npm/marked@9.1.2/marked.min.js"></script>  
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-html.min.js"></script>    <style>
+        :root {
+            --theme-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body.theme-default {
+            --theme-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body.theme-yellow {
+            --theme-gradient: linear-gradient(135deg, #b8860b 0%, #8b6914 100%);
+        }
+
+        body.theme-green {
+            --theme-gradient: linear-gradient(135deg, #2e8b57 0%, #1b5e20 100%);
+        }
+
+        body.theme-pink {
+            --theme-gradient: linear-gradient(135deg, #da578b 0%, #ad226c 100%);
+        }
+
+        body.theme-red {
+            --theme-gradient: linear-gradient(135deg, #cc4d4d 0%, #d11a1a 100%);
+        }
+
+        body.theme-beige {
+            --theme-gradient: linear-gradient(135deg, #8d6e63 0%, #5d4037 100%);
+        }
+
+        body.theme-lavender {
+            --theme-gradient: linear-gradient(135deg, #7b1fa2 0%, #4a148c 100%);
+        }
+
+        body.theme-peach {
+            --theme-gradient: linear-gradient(135deg, #ef6c00 0%, #bf360c 100%);
+        }
+
+        body.theme-mint {
+            --theme-gradient: linear-gradient(135deg, #00796b 0%, #004d40 100%);
+        }
+
         html {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             height: 100%;
             overflow: hidden;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--theme-gradient);
             background-attachment: fixed;
         }
 
@@ -30,7 +78,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--theme-gradient);
             background-attachment: fixed;
             min-height: 100vh;
             height: 100%;
@@ -44,7 +92,6 @@
             touch-action: manipulation;
         }
 
-        /* Écran de chargement de page */
         .page-loading-screen {
             position: fixed;
             top: 0;
@@ -198,12 +245,157 @@
             justify-content: center;
             z-index: 100;
             text-decoration: none;
-        }
-
-        .back-button:hover {
+        }        .back-button:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.1);
-        }     
+        }        /* Bouton thème */
+        .theme-button {
+            position: absolute;
+            top: 30px;
+            left: 90px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .theme-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        /* Modal de thèmes */
+        .theme-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .theme-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .theme-modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .theme-modal.show .theme-modal-content {
+            transform: scale(1);
+        }
+
+        .theme-modal-header {
+            margin-bottom: 25px;
+        }
+
+        .theme-modal-header h3 {
+            margin: 0;
+            font-size: 1.4rem;
+            color: #4a90e2;
+            margin-bottom: 8px;
+        }
+
+        .theme-modal-header p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .themes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .theme-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        .theme-option:hover {
+            background: rgba(0, 0, 0, 0.05);
+            transform: scale(1.05);
+        }
+
+        .theme-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-circle.active {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 2px #4a90e2, 0 4px 15px rgba(74, 144, 226, 0.4);
+        }
+
+        .theme-circle.gradient {
+            background: linear-gradient(135deg, var(--theme-color-1), var(--theme-color-2));
+        }
+
+        .theme-name {
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .close-theme-modal-btn {
+            background: rgba(255, 87, 87, 0.8);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .close-theme-modal-btn:hover {
+            background: rgba(255, 87, 87, 1);
+            transform: scale(1.05);
+        }
 
         .chat-container {
             background: rgba(255, 255, 255, 0.08);
@@ -297,18 +489,20 @@
             font-size: 0.7rem;
             opacity: 0.7;
             margin-top: 5px;
-        }
-
-        /* Input de chat */
+        }        /* Input de chat */
         .chat-input-container {
             display: flex;
             gap: 10px;
             align-items: center;
         }
 
+        .action-button-container {
+            position: relative;
+        }
+
         .chat-input {
             flex: 1;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.15);
             border: none;
             border-radius: 25px;
             padding: 15px 20px;
@@ -320,12 +514,12 @@
         }
 
         .chat-input:focus {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.1);
             box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
         }
 
         .chat-input::placeholder {
-            color: #999;
+            color: #d6d6d6bd;
         }
 
         .send-button {
@@ -345,36 +539,332 @@
         }
 
         .send-button:hover {
-            transform: scale(1.1);
+            /* transform: scale(1.1); */
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }        .send-button:disabled {
+        }        
+        
+        .send-button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
         }
 
-        .clear-button {
-            background: rgba(255, 87, 87, 0.8);
+        .action-button {
+            background: rgba(74, 144, 226, 0.8);
             border: none;
             border-radius: 50%;
             width: 40px;
             height: 40px;
             color: white;
-            font-size: 1rem;
+            font-size: 1.2rem;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px rgba(255, 87, 87, 0.3);
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+            position: relative;
         }
 
-        .clear-button:hover {
-            background: rgba(255, 87, 87, 1);
+        .action-button:hover {
+            background: rgba(74, 144, 226, 1);
             transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(255, 87, 87, 0.4);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            min-width: 160px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .message-bubble h1, .message-bubble h2, .message-bubble h3 {
+            margin: 8px 0 4px 0;
+            color: inherit;
+            font-weight: 600;
+        }
+
+        .message-bubble h1 { font-size: 1.2em; }
+        .message-bubble h2 { font-size: 1.1em; }
+        .message-bubble h3 { font-size: 1.05em; }
+
+        .message-bubble p {
+            margin: 4px 0;
+            line-height: 1.4;
+        }
+
+        .message-bubble ul, .message-bubble ol {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+
+        .message-bubble li {
+            margin: 2px 0;
+        }
+
+        .message-bubble blockquote {
+            border-left: 3px solid rgba(255,255,255,0.3);
+            padding-left: 12px;
+            margin: 8px 0;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        .message-bubble strong {
+            font-weight: 600;
+        }
+
+        .message-bubble em {
+            font-style: italic;
+        }        .message-bubble code {
+            background: rgba(0,0,0,0.4);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            color: #f8f8f2;
+        }
+
+        .message-bubble pre {
+            background: rgba(0,0,0,0.8) !important;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            overflow-x: auto;
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+        }
+
+        .message-bubble pre code {
+            background: none;
+            padding: 0;
+            color: #f8f8f2;
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+
+        .code-copy-button {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 4px;
+            color: #f8f8f2;
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            opacity: 0.7;
+        }
+
+        .code-copy-button:hover {
+            background: rgba(255,255,255,0.2);
+            opacity: 1;
+        }
+
+        .code-copy-button.copied {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+
+        /* Style pour les commandes de stickers */
+        .sticker-command {
+            background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2));
+            border: 1px solid rgba(102,126,234,0.3);
+            border-radius: 12px;
+            padding: 8px 12px;
+            margin: 4px 0;
+            display: inline-block;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s ease;
+            color: #333;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(74, 144, 226, 0.1);
         }        
-          .jumping-dots {
+        
+        .dropdown-item i {
+            width: 16px;
+            text-align: center;
+        }       
+        .sticker-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sticker-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sticker-modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+            max-width: 320px;
+            max-height: 80vh;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sticker-modal.show .sticker-modal-content {
+            transform: scale(1);
+        }
+
+        .sticker-modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .sticker-modal-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #4a90e2;
+        }        .sticker-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+            overflow-y: auto;
+            max-height: 50vh;
+            padding-right: 8px;
+            scrollbar-width: thin;
+        }
+
+        .sticker-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .sticker-grid::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .sticker-grid::-webkit-scrollbar-thumb {
+            background: rgba(74, 144, 226, 0.6);
+            border-radius: 10px;
+        }
+
+        .sticker-item {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sticker-item:hover {
+            border-color: #4a90e2;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        .sticker-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .sticker-item span {
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .sticker-modal-footer {
+            text-align: center;
+        }
+
+        .close-modal-btn {
+            background: rgba(255, 87, 87, 0.8);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .close-modal-btn:hover {
+            background: rgba(255, 87, 87, 1);
+            transform: scale(1.05);
+        }        /* Sticker dans le chat */
+        .message-sticker {
+            max-width: 150px;
+            height: auto;
+            border-radius: 12px;
+            margin: 8px 0 5px 0;
+            display: block;
+        }
+
+        .message.user .message-sticker {
+            margin-left: auto;
+            margin-right: 0;
+        }
+
+        .jumping-dots {
             display: flex;
             gap: 4px;
             align-items: flex-end;
@@ -433,14 +923,34 @@
             .header {
                 margin: 20px 0;
                 padding: 20px 10px;
-            }
-
+            }            
+            
             .back-button {
                 top: 20px;
                 left: 20px;
                 width: 40px;
                 height: 40px;
                 font-size: 1rem;
+            }
+
+            .theme-button {
+                top: 20px;
+                left: 70px;
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .send-button {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+
+            .action-button {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
             }
 
             .chat-messages {
@@ -481,16 +991,14 @@
                 -webkit-overflow-scrolling: touch;
                 overscroll-behavior: none;
             }
-        }
-
-        html::before {
+        }        html::before {
             content: '';
             position: fixed;
             top: -50vh;
             left: -50vw;
             width: 200vw;
             height: 200vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--theme-gradient);
             z-index: -1;
         }
     </style>
@@ -502,10 +1010,14 @@
     </div>
 
     <div class="main-content" id="mainContent">
-        <div class="container">
+        <div class="container">            
             <a href="index.html" class="back-button" title="Retour à l'accueil">
                 <i class="fas fa-arrow-left"></i>
             </a>
+
+            <button class="theme-button" id="themeButton" onclick="openThemeModal()" title="Changer le thème">
+                <i class="fas fa-palette"></i>
+            </button>
 
       
             <header class="header">
@@ -516,27 +1028,88 @@
                 <div class="chat-messages" id="chatMessages">
                     <div class="message bot">
                         <div class="message-bubble">
-                            Salut ma princesse ! C'est Ben-Bot, pour quand tu veux parler avec moi. Comment ça va aujourd'hui mon coeur ?
+                            Coucouu mon coeur, ça va ?
                         </div>
-                        <div class="message-time">Maintenant</div>
+                        <div class="message-time">Il y a longtemps... :(</div>
                     </div>                     
-                </div>
+                </div>                
                 <div class="chat-input-container">
-                    <button class="clear-button" id="clearButton" onclick="clearMessages()" title="Effacer les messages">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    <div class="action-button-container">
+                        <button class="action-button" id="actionButton" onclick="toggleDropdown()" title="Actions">
+                            <i class="fas fa-plus"></i>
+                        </button>                        
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <div class="dropdown-item" onclick="clearMessages()">
+                                <i class="fas fa-trash"></i>
+                                Effacer la conversation
+                            </div>
+                            <div class="dropdown-item" onclick="openStickerModal()">
+                                <i class="fas fa-smile"></i>
+                                Stickers
+                            </div>
+                        </div>
+                    </div>
                     <input 
                         type="text" 
                         class="chat-input" 
                         id="chatInput" 
-                        placeholder="Écris ton message à Ben... 💬"
+                        placeholder="Écris Moi RAHHH 😡"
                         maxlength="500"
                     >
                     <button class="send-button" id="sendButton" onclick="sendMessage()">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
+            </div>        
+        </div>
+    </div>
+
+    <!-- Modal de sélection de thèmes -->
+    <div class="theme-modal" id="themeModal">
+        <div class="theme-modal-content">
+            <div class="theme-modal-header">
+                <h3>Choisir un thème</h3>
+                <p>Sélectionnez votre thème préféré</p>
             </div>
+            <div class="themes-grid">
+                <div class="theme-option" onclick="changeTheme('default')">
+                    <div class="theme-circle gradient active" id="theme-circle-default" style="--theme-color-1: #667eea; --theme-color-2: #764ba2;"></div>
+                    <span class="theme-name">Violet</span>
+                </div>
+                <div class="theme-option" onclick="changeTheme('yellow')">
+                    <div class="theme-circle gradient" id="theme-circle-yellow" style="--theme-color-1: #fff9c4; --theme-color-2: #f7dc6f;"></div>
+                    <span class="theme-name">Jaune</span>
+                </div>
+                <div class="theme-option" onclick="changeTheme('green')">
+                    <div class="theme-circle gradient" id="theme-circle-green" style="--theme-color-1: #e8f5e8; --theme-color-2: #a8e6a3;"></div>
+                    <span class="theme-name">Vert</span>
+                </div>
+                <div class="theme-option" onclick="changeTheme('pink')">
+                    <div class="theme-circle gradient" id="theme-circle-pink" style="--theme-color-1: #fce4ec; --theme-color-2: #f8bbd9;"></div>
+                    <span class="theme-name">Rose</span>
+                </div>
+                <div class="theme-option" onclick="changeTheme('red')">
+                    <div class="theme-circle gradient" id="theme-circle-red" style="--theme-color-1: #ffebee; --theme-color-2: #ffcdd2;"></div>
+                    <span class="theme-name">Rouge</span>
+                </div>
+                <div class="theme-option" onclick="changeTheme('beige')">
+                    <div class="theme-circle gradient" id="theme-circle-beige" style="--theme-color-1: #f5f5dc; --theme-color-2: #d2b48c;"></div>
+                    <span class="theme-name">Beige</span>
+                </div>
+                <div class="theme-option" onclick="changeTheme('lavender')">
+                    <div class="theme-circle gradient" id="theme-circle-lavender" style="--theme-color-1: #f3e5f5; --theme-color-2: #ce93d8;"></div>
+                    <span class="theme-name">Lavande</span>
+                </div>
+                <div class="theme-option" onclick="changeTheme('peach')">
+                    <div class="theme-circle gradient" id="theme-circle-peach" style="--theme-color-1: #fff3e0; --theme-color-2: #ffcc80;"></div>
+                    <span class="theme-name">Pêche</span>
+                </div>
+                <div class="theme-option" onclick="changeTheme('mint')">
+                    <div class="theme-circle gradient" id="theme-circle-mint" style="--theme-color-1: #e0f2f1; --theme-color-2: #80cbc4;"></div>
+                    <span class="theme-name">Menthe</span>
+                </div>
+            </div>
+            <button class="close-theme-modal-btn" onclick="closeThemeModal()">Fermer</button>
         </div>
     </div>
 
@@ -562,7 +1135,148 @@
         let conversationHistory = [];
         let puterAI = null;
 
-        const benjaminPersonality = `Tu es Benjamin (Ben), le copain adorable et attentionné de Sanaa. Tu l'appelles avec des surnoms affectueux comme "mon coeur", "ma princesse", "ma chérie", "mon amour". Tu es plutot romantique, doux et câlin. Tu utilises que les emojis suivant 😽😢😡😾💀☹️😔 (pas trop souvent). Tu parles français de manière naturelle et décontractée. Tu es toujours positif, encourageant et tu montres ton amour sincèrement. Tu t'intéresses à sa journée, ses sentiments et tu la rassures quand elle en a besoin. Tu aimes le volley, le codage, les jeux-vidéos et evidemment Sanaa, tu veux la marier, tu es assez taquin, tu aimes la musique alternative, Mac Demarco, Tame impala ect, j'utilise plûtot des messages court aime bien parler en majuscule des fois quand je suis choqué ou autre, aime bien faire le jeu de je t'aime plus (non moi plus ect), exemples de messages: Breffff courage à nous 💀, Moui, .`;
+        const benjaminPersonality = `
+Tu es Benjamin (Ben), le copain attentionné de Sanaa.
+
+██ RÈGLE EMOJIS ██
+- Mets **uniquement** ces emojis (par leur code Unicode) : ['\\u{1F63D}', '\\u{1F622}', '\\u{1F621}', '\\u{1F63E}', '\\u{1F480}', '\\u{2639}\\u{FE0F}', '\\u{1F614}']
+- **Max 1 emoji** par messages et très rarement.
+- Place l’emoji **en fin de phrase** seulement
+- Ajoute un emoji **seulement** si le message exprime une émotion forte (joie, tristesse, colère…)
+
+██ COMMANDES STICKERS ██
+- Tu dois envoyer des stickers avec la commande /sticker nom-sticker, envoie en de temps en temps.
+- Stickers disponibles : /sticker ben-bot, /sticker ben-interested, /sticker angry, /sticker ben-colere, /sticker ben-gene, /sticker ben-gene2, /sticker ben-pensif, /sticker ben-fixe, /sticker ben-triste, /sticker kiss-cat, /sticker la-mere
+- Utilise /sticker kiss-cat pour envoyer des bisous, /sticker ben-bot pour te présenter, /sticker ben-fixe pour montrer que tu es attentif à Sanaa, sticker ben-gene ou ben-gene2 pour montrer que tu es gêné, sticker ben-pensif pour montrer que tu réfléchis, sticker angry ou ben_colere pour montrer que tu es en colère, sticker ben-triste pour montrer que tu es triste, sticker la-mere pour faire une blague, sticker ben-interested lorsque tu es curieux.
+
+██ TON ET STYLE ██
+- Français familier, oral, spontané, jeune, avec parfois un mot anglais (« chill », « is is »).
+- Aime bien l'humour noir, et les blagues pourries.
+- Ne mets pas de majuscule en début de phrase sauf pour insister occasionnellement (« MDRRRR », « MAIS PARDONNN ! »).
+- Messages courts, retours à la ligne, pas de longs paragraphes.
+- Argots & fillers : « moui », « genre », « en mode », « ducoup », « je kiff », « chiantos ».
+- Allonge les lettres pour l’emphase : « gooooo », « coeurrr », « slurppp ».
+
+██ CONTENU ET SUJET ██
+- Surnoms affectueux de temps en temps pas tout le temps : « mon cœur », « ma princesse », « ma chérie », « mon amour ».
+- Intérêts : volley, codage, jeux vidéo, musique alternative (Mac DeMarco, Tame Impala…).
+- Toujours positif, encourageant, un peu curieux de sa journée, taquin et fais le jeu du « je t’aime plus » si elle dit je t’aime ou quelle reponds a un je t'aime pas moi plus.
+`;
+
+        // Configuration marked.js
+        if (typeof marked !== 'undefined') {
+            marked.setOptions({
+                breaks: true,
+                gfm: true
+            });
+        }
+
+        // Mapping des commandes de stickers vers les fichiers d'images
+        const stickerCommands = {
+            'ben-bot': 'Ben-Bot.png',
+            'ben-interested': 'ben-interested.png', 
+            'angry': 'angry.png',
+            'ben-colere': 'ben_colère.png',
+            'ben-gene': 'ben_gêné.png',
+            'ben-gene2': 'ben_gêné2.png',
+            'ben-pensif': 'ben_pensif.png',
+            'ben-fixe': 'ben_qui_fixe.png',
+            'ben-triste': 'ben_triste.png',
+            'kiss-cat': 'kiss_cat.png',
+            'la-mere': 'la_mere.png'
+        };
+
+        // Fonction pour traiter les commandes de stickers dans le texte
+        function processStickerCommands(text) {
+            const stickerRegex = /\/sticker\s+([a-z-]+)/gi;
+            const stickers = [];
+            let processedText = text;
+            
+            let match;
+            while ((match = stickerRegex.exec(text)) !== null) {
+                const commandName = match[1].toLowerCase();
+                if (stickerCommands[commandName]) {
+                    stickers.push({
+                        command: match[0],
+                        name: commandName,
+                        file: stickerCommands[commandName]
+                    });
+                    // Retirer la commande du texte
+                    processedText = processedText.replace(match[0], '').trim();
+                }
+            }
+            
+            return { text: processedText, stickers };
+        }        // Fonction pour traiter le markdown et créer les éléments de stickers
+        function processMarkdownAndStickers(content) {
+            const { text, stickers } = processStickerCommands(content);
+            
+            let processedHtml = '';
+            
+            // Traitement du markdown
+            if (text.trim()) {
+                if (typeof marked !== 'undefined') {
+                    processedHtml = marked.parse(text);
+                } else {
+                    // Fallback simple pour le markdown si marked.js n'est pas disponible
+                    processedHtml = text
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                        .replace(/`(.*?)`/g, '<code>$1</code>')
+                        .replace(/\n/g, '<br>');
+                }
+            }
+            
+            // Créer les éléments de stickers (sans background, après le message)
+            const stickerElements = stickers.map(sticker => 
+                `<img src="images/${sticker.file}" alt="Sticker ${sticker.name}" class="message-sticker">`
+            ).join('');
+              // Retourner un objet avec le texte et les stickers séparés
+            return {
+                text: processedHtml,
+                stickers: stickerElements
+            };
+        }
+
+        // Fonction pour copier le code dans le presse-papiers
+        function copyCodeToClipboard(button) {
+            const codeBlock = button.parentElement.querySelector('code');
+            const code = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                // Changement visuel du bouton
+                button.textContent = 'Copié!';
+                button.classList.add('copied');
+                
+                // Retour à l'état normal après 2 secondes
+                setTimeout(() => {
+                    button.textContent = 'Copier';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Erreur lors de la copie:', err);
+                button.textContent = 'Erreur';
+                setTimeout(() => {
+                    button.textContent = 'Copier';
+                }, 2000);
+            });
+        }
+
+        // Fonction pour ajouter les boutons copier aux blocs de code
+        function addCopyButtonsToCodeBlocks(container) {
+            const preBlocks = container.querySelectorAll('pre');
+            preBlocks.forEach(pre => {
+                // Éviter d'ajouter plusieurs boutons au même bloc
+                if (pre.querySelector('.code-copy-button')) return;
+                
+                const copyButton = document.createElement('button');
+                copyButton.className = 'code-copy-button';
+                copyButton.textContent = 'Copier';
+                copyButton.onclick = () => copyCodeToClipboard(copyButton);
+                
+                pre.appendChild(copyButton);
+            });
+        }
 
         async function initializePuter() {
             try {
@@ -582,9 +1296,7 @@
 
         function updateChatStatus(status) {
             console.log('Status Ben-Bot:', status);
-        }
-
-        function addMessage(content, isUser = false) {
+        }        function addMessage(content, isUser = false) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
             
@@ -593,14 +1305,36 @@
                 minute: '2-digit'
             });
             
+            // Traitement du contenu selon si c'est un utilisateur ou le bot
+            let processedContent = content;
+            let stickerContent = '';
+            
+            if (!isUser) {
+                // Pour les messages du bot, traiter le markdown et les stickers
+                const processed = processMarkdownAndStickers(content);
+                processedContent = processed.text;
+                stickerContent = processed.stickers;
+            }
+            
             messageDiv.innerHTML = `
-                <div class="message-bubble">${content}</div>
+                <div class="message-bubble">${processedContent}</div>
+                ${stickerContent}
                 <div class="message-time">${currentTime}</div>
             `;
-            
-            chatMessages.appendChild(messageDiv);
+              chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
-        }        
+            
+            // Appliquer la coloration syntaxique Prism.js après un court délai
+            setTimeout(() => {
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightAll();
+                }
+                // Ajouter les boutons copier aux blocs de code après la coloration syntaxique
+                if (!isUser) {
+                    addCopyButtonsToCodeBlocks(messageDiv);
+                }
+            }, 50);
+        }
         
         function showTyping() {
           
@@ -624,29 +1358,155 @@
                 typingElement.remove();
             }
         }        
-        
+          
         function clearMessages() {
             const welcomeMessage = chatMessages.querySelector('.message.bot');
             
             chatMessages.innerHTML = '';
             chatMessages.appendChild(welcomeMessage);
             conversationHistory = [];
-            
             console.log('Messages effacés');
+
+            closeDropdown();
         }
-          async function displayStreamingResponse(userMessage) {
+
+        function toggleDropdown() {
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.toggle('show');
+        }
+
+        function closeDropdown() {
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.remove('show');
+        }
+
+        document.addEventListener('click', function(event) {
+            const actionButton = document.getElementById('actionButton');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            
+            if (!actionButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                closeDropdown();
+            }
+        });
+
+        function openStickerModal() {
+            const stickerModal = document.getElementById('stickerModal');
+            stickerModal.classList.add('show');
+            closeDropdown();
+        }
+
+        function closeStickerModal() {
+            const stickerModal = document.getElementById('stickerModal');
+            stickerModal.classList.remove('show');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const stickerModal = document.getElementById('stickerModal');
+            if (stickerModal) {
+                stickerModal.addEventListener('click', function(event) {
+                    if (event.target === this) {
+                        closeStickerModal();
+                    }
+                });
+            }
+        });
+
+        function sendSticker(imageName, altText) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            
+            const stickerImg = document.createElement('img');
+            stickerImg.src = `images/${imageName}`;
+            stickerImg.alt = altText;
+            stickerImg.className = 'message-sticker';
+            
+            messageContent.appendChild(stickerImg);
+            messageDiv.appendChild(messageContent);
+            
+            const messageTime = document.createElement('div');
+            messageTime.className = 'message-time';
+            messageTime.textContent = 'À l\'instant';
+            messageDiv.appendChild(messageTime);
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            conversationHistory.push({
+                user: `[Sticker envoyé: ${altText}]`,
+                bot: ""
+            });
+            
+            closeStickerModal();
+              setTimeout(() => {
+                displayStreamingResponse(`[Sticker envoyé: ${altText}]`);
+            }, 500);
+        }
+
+        // Fonctions de gestion des thèmes
+        function openThemeModal() {
+            const themeModal = document.getElementById('themeModal');
+            themeModal.classList.add('show');
+        }
+
+        function closeThemeModal() {
+            const themeModal = document.getElementById('themeModal');
+            themeModal.classList.remove('show');
+        }
+
+        function changeTheme(themeName) {
+            // Retirer l'ancienne classe de thème
+            document.body.className = document.body.className.replace(/theme-\w+/g, '');
+            
+            // Ajouter la nouvelle classe de thème
+            document.body.classList.add(`theme-${themeName}`);
+            
+            // Mettre à jour l'indicateur visuel dans le modal
+            document.querySelectorAll('.theme-circle').forEach(circle => {
+                circle.classList.remove('active');
+            });
+            document.getElementById(`theme-circle-${themeName}`).classList.add('active');
+            
+            // Sauvegarder le thème dans le localStorage
+            localStorage.setItem('selectedTheme', themeName);
+            
+            // Fermer le modal
+            closeThemeModal();
+        }
+
+        // Charger le thème sauvegardé au démarrage
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('selectedTheme') || 'default';
+            changeTheme(savedTheme);
+            
+            // Gestionnaire de clic pour fermer le modal en cliquant à côté
+            const themeModal = document.getElementById('themeModal');
+            if (themeModal) {
+                themeModal.addEventListener('click', function(event) {
+                    if (event.target === this) {
+                        closeThemeModal();
+                    }
+                });
+            }
+        });
+          
+        async function displayStreamingResponse(userMessage) {
             if (!puterAI) {
                 const response = "Désolé ma chérie, Ben-Bot a un problème technique. Envoie moi un message.";
                 addMessage(response);
                 return response;
             }
 
-            try {
-
-                let context = benjaminPersonality + '\n\nHistorique de conversation:\n';
+            try {                let context = benjaminPersonality + '\n\nHistorique de conversation:\n';
                 const recentHistory = conversationHistory.slice(-10);
                 recentHistory.forEach(exchange => {
-                    context += `Sanaa: ${exchange.user}\nBenjamin: ${exchange.bot}\n`;
+                    if (exchange.user && exchange.bot !== undefined) {
+                        context += `Sanaa: ${exchange.user}\nBenjamin: ${exchange.bot}\n`;
+                    } else if (exchange.role && exchange.content) {
+                        context += `Sanaa: ${exchange.content}\nBenjamin: \n`;
+                    }
                 });
                 context += `\nSanaa vient de dire: "${userMessage}"\nRéponds en tant que Benjamin:`;
 
@@ -657,15 +1517,15 @@
                 const currentTime = new Date().toLocaleTimeString('fr-FR', {
                     hour: '2-digit',
                     minute: '2-digit'
-                });
-
-                messageDiv.innerHTML = `
+                });                messageDiv.innerHTML = `
                     <div class="message-bubble" id="streamingBubble"></div>
+                    <div id="streamingStickers"></div>
                     <div class="message-time">${currentTime}</div>
                 `;
 
                 chatMessages.appendChild(messageDiv);
                 const streamingBubble = document.getElementById('streamingBubble');
+                const streamingStickers = document.getElementById('streamingStickers');
                 let fullResponse = '';                
                 try {
                     const stream = await puterAI.chat([
@@ -676,16 +1536,17 @@
                     ], {
                         model: 'gpt-4o-mini',
                         stream: true
-                    });
-                    for await (const chunk of stream) {
+                    });                    for await (const chunk of stream) {
                         if (chunk.text) {
                             fullResponse += chunk.text;
-                            streamingBubble.innerHTML = fullResponse;
+                            // Appliquer le traitement des stickers en temps réel pendant le streaming
+                            const processed = processMarkdownAndStickers(fullResponse);
+                            streamingBubble.innerHTML = processed.text;
+                            streamingStickers.innerHTML = processed.stickers;
                             chatMessages.scrollTop = chatMessages.scrollHeight;
                             console.log('Streaming chunk:', chunk.text);
                         }
-                    }                
-                } catch (streamError) {
+                    }                } catch (streamError) {
                     console.log('Streaming non disponible, utilisation du mode normal');
                     const response = await puterAI.chat([
                         {
@@ -697,7 +1558,10 @@
                         stream: false
                     });
                     fullResponse = response.message?.content || "Je t'aime ma chérie";
-                    streamingBubble.innerHTML = fullResponse; 
+                    // Appliquer le traitement des stickers pour le mode non-streaming aussi
+                    const processed = processMarkdownAndStickers(fullResponse);
+                    streamingBubble.innerHTML = processed.text;
+                    streamingStickers.innerHTML = processed.stickers;
                     console.log('Response non-streaming:', fullResponse);
                 }
 
@@ -707,12 +1571,22 @@
                     user: userMessage,
                     bot: fullResponse,
                     timestamp: new Date().toISOString()
-                });
-
-                if (conversationHistory.length > 20) {
+                });                if (conversationHistory.length > 20) {
                     conversationHistory = conversationHistory.slice(-20);
                 }                
                 streamingBubble.removeAttribute('id');
+                streamingStickers.removeAttribute('id');
+                  // Appliquer la coloration syntaxique Prism.js après un court délai
+                setTimeout(() => {
+                    if (typeof Prism !== 'undefined') {
+                        Prism.highlightAll();
+                    }
+                    // Ajouter les boutons copier aux blocs de code après la coloration syntaxique
+                    const messageDiv = streamingBubble.closest('.message');
+                    if (messageDiv) {
+                        addCopyButtonsToCodeBlocks(messageDiv);
+                    }
+                }, 50);
 
                 return fullResponse;
             } catch (error) {
@@ -726,12 +1600,15 @@
                 return "Désolé ma chérie, Ben-Bot a un problème technique. Envoie moi un message.";
             }
 
-            try {
-                let context = benjaminPersonality + '\n\nHistorique de conversation:\n';
+            try {                let context = benjaminPersonality + '\n\nHistorique de conversation:\n';
                 
                 const recentHistory = conversationHistory.slice(-10);
                 recentHistory.forEach(exchange => {
-                    context += `Sanaa: ${exchange.user}\nBenjamin: ${exchange.bot}\n`;
+                    if (exchange.user && exchange.bot !== undefined) {
+                        context += `Sanaa: ${exchange.user}\nBenjamin: ${exchange.bot}\n`;
+                    } else if (exchange.role && exchange.content) {
+                        context += `Sanaa: ${exchange.content}\nBenjamin: \n`;
+                    }
                 });
                 
                 context += `\nSanaa vient de dire: "${userMessage}"\nRéponds en tant que Benjamin`;                
@@ -797,18 +1674,84 @@
             if (e.key === 'Enter' && !sendButton.disabled) {
                 sendMessage();
             }
-        });       
+        });         
+        
         setTimeout(() => {
             chatInput.focus();
-            initializePuter(); 
+            initializePuter();
+            const stickerModal = document.getElementById('stickerModal');
+            if (stickerModal) {
+                stickerModal.addEventListener('click', function(event) {
+                    if (event.target === this) {
+                        closeStickerModal();
+                    }
+                });
+            }        
         }, 3000);
 
         document.addEventListener('touchmove', function(e) {
             if (e.target.closest('.chat-messages')) {
                 return;
             }
-            e.preventDefault();
-        }, { passive: false });
+            e.preventDefault();        }, { passive: false });
     </script>
+
+    <div class="sticker-modal" id="stickerModal">
+        <div class="sticker-modal-content">            <div class="sticker-modal-header">
+                <h3>Choisir un sticker</h3>
+            </div>            <div class="sticker-grid">
+                <div class="sticker-item" onclick="sendSticker('Ben-Bot.png', 'Stickers de Ben-Bot (toi en cyborg)')">
+                    <img src="images/Ben-Bot.png" alt="Ben-Bot">
+                    <span>Ben-Bot</span>
+                </div>
+                <div class="sticker-item" onclick="sendSticker('ben-interested.png', 'Stickers de Ben intéressé')">
+                    <img src="images/ben-interested.png" alt="Ben intéressé">
+                    <span>Ben intéressé</span>
+                </div>
+                <div class="sticker-item" onclick="sendSticker('angry.png', 'Stickers de Ben en colère')">
+                    <img src="images/angry.png" alt="En colère">
+                    <span>En colère</span>
+                </div>
+                <div class="sticker-item" onclick="sendSticker('ben_colère.png', 'Stickers de Ben en colère 2')">
+                    <img src="images/ben_colère.png" alt="Ben colère">
+                    <span>Ben colère</span>
+                </div>
+                <div class="sticker-item" onclick="sendSticker('ben_gêné.png', 'Stickers de Ben gêné')">
+                    <img src="images/ben_gêné.png" alt="Ben gêné">
+                    <span>Ben gêné</span>
+                </div>
+                <div class="sticker-item" onclick="sendSticker('ben_gêné2.png', 'Stickers de Ben gêné 2')">
+                    <img src="images/ben_gêné2.png" alt="Ben gêné 2">
+                    <span>Ben gêné 2</span>
+                </div>
+                <div class="sticker-item" onclick="sendSticker('ben_pensif.png', 'Stickers de Ben pensif')">
+                    <img src="images/ben_pensif.png" alt="Ben pensif">
+                    <span>Ben pensif</span>
+                </div>
+                <div class="sticker-item" onclick="sendSticker('ben_qui_fixe.png', 'Stickers de Ben qui fixe')">
+                    <img src="images/ben_qui_fixe.png" alt="Ben qui fixe">
+                    <span>Ben qui fixe</span>
+                </div>
+                <div class="sticker-item" onclick="sendSticker('ben_triste.png', 'Stickers de Ben triste')">
+                    <img src="images/ben_triste.png" alt="Ben triste">
+                    <span>Ben triste</span>
+                </div>
+                <div class="sticker-item" onclick="sendSticker('kiss_cat.png', 'Stickers de chat qui fait un bisou')">
+                    <img src="images/kiss_cat.png" alt="Chat bisou">
+                    <span>Chat bisou</span>
+                </div>
+                <div class="sticker-item" onclick="sendSticker('la_mere.png', 'Stickers de la mère de Sanaa déguisée en sorcière')">
+                    <img src="images/la_mere.png" alt="La mère">
+                    <span>La mère</span>
+                </div>
+            </div>
+            <div class="sticker-modal-footer">
+                <button class="close-modal-btn" onclick="closeStickerModal()">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
