@@ -1,0 +1,20 @@
+{
+  "name": "Mon Cœur",
+  "short_name": "Mon Cœur",
+  "description": "For My Beautiful Girlfriend",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "images/ben.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/ben.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
