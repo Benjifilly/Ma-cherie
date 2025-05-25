@@ -373,29 +373,45 @@
             background: rgba(255, 87, 87, 1);
             transform: scale(1.1);
             box-shadow: 0 6px 20px rgba(255, 87, 87, 0.4);
+        }        
+          .jumping-dots {
+            display: flex;
+            gap: 4px;
+            align-items: flex-end;
+            height: 20px;
+            padding: 0 5px;
+            margin: 10px 0 15px 0;
+            margin-right: 35%;
+            justify-content: flex-start;
         }
-
-        .typing-indicator {
-            display: none;
-            padding: 10px 20px;
-            font-style: italic;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
+        
+        .jumping-dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            animation: jumpingDot 1.2s infinite;
         }
-
-        .typing-indicator.show {
-            display: block;
+        
+        .jumping-dot:nth-child(1) {
+            animation-delay: 0s;
         }
-
-        .typing-dots {
-            display: inline-block;
-            animation: typingDots 1.5s infinite;
+        
+        .jumping-dot:nth-child(2) {
+            animation-delay: 0.2s;
         }
-
-        @keyframes typingDots {
-            0%, 60%, 100% { content: '.'; }
-            20% { content: '..'; }
-            40% { content: '...'; }
+        
+        .jumping-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes jumpingDot {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-15px);
+            }
         }
 
         @keyframes messageAppear {
@@ -437,14 +453,19 @@
 
             .message.user .message-bubble {
                 margin-left: 15%;
-            }            .message.bot .message-bubble {
+            }            
+            
+            .message.bot .message-bubble {
                 margin-right: 15%;
-            }
-
-            .clear-button {
+            }            .clear-button {
                 width: 35px;
                 height: 35px;
                 font-size: 0.9rem;
+            }
+            
+            .jumping-dots {
+                margin-right: 15%;
+                padding: 0 12px;
             }
         }
 
@@ -474,40 +495,32 @@
         }
     </style>
 </head>
-<body>    <!-- Écran de chargement de page -->
+<body>    
     <div class="page-loading-screen" id="pageLoadingScreen">
         <div class="loading-icon">🌸</div>
         <div class="loading-text">Connexion à Ben-Bot...</div>
     </div>
 
-    <!-- Contenu principal -->
     <div class="main-content" id="mainContent">
         <div class="container">
-            <!-- Bouton retour -->
             <a href="index.html" class="back-button" title="Retour à l'accueil">
                 <i class="fas fa-arrow-left"></i>
             </a>
 
-            <!-- Header -->
+      
             <header class="header">
-                <h1 class="title">🤖 Ben-Bot 🤖</h1>
+                <h1 class="title">Ben-Bot</h1>
                 <p class="subtitle">Pour parler avec ton mari, tout le temps 😋</p>
-            </header>
-
-            <!-- Zone de chat -->
-            <div class="chat-container">                
+            </header>           
+            <div class="chat-container">                    
                 <div class="chat-messages" id="chatMessages">
                     <div class="message bot">
                         <div class="message-bubble">
                             Salut ma princesse ! C'est Ben-Bot, pour quand tu veux parler avec moi. Comment ça va aujourd'hui mon coeur ?
                         </div>
                         <div class="message-time">Maintenant</div>
-                    </div>
+                    </div>                     
                 </div>
-
-                <div class="typing-indicator" id="typingIndicator">
-                    Ben-Bot est en train d'écrire<span class="typing-dots">...</span>
-                </div>                
                 <div class="chat-input-container">
                     <button class="clear-button" id="clearButton" onclick="clearMessages()" title="Effacer les messages">
                         <i class="fas fa-trash"></i>
@@ -528,12 +541,10 @@
     </div>
 
     <script>
-        // Gestion du chargement de page
         window.addEventListener('load', function() {
             const pageLoadingScreen = document.getElementById('pageLoadingScreen');
             const mainContent = document.getElementById('mainContent');
             
-            // Attendre 2 secondes puis faire la transition
             setTimeout(() => {
                 pageLoadingScreen.classList.add('fade-out');
                 
@@ -543,17 +554,15 @@
                     document.body.style.overflow = 'auto';
                 }, 600);
             }, 2000);
-        });
+        });        
 
-        // Fonctionnalité de chat
         const chatMessages = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
         const sendButton = document.getElementById('sendButton');
-        const typingIndicator = document.getElementById('typingIndicator');    
         let conversationHistory = [];
         let puterAI = null;
 
-        const benjaminPersonality = `Tu es Benjamin (Ben), le copain adorable et attentionné de Sanaa. Tu l'appelles avec des surnoms affectueux comme "mon coeur", "ma princesse", "ma chérie", "ma puce", "mon amour", "ma belle". Tu es très romantique, doux et câlin. Tu utilises peu d'emojis (maximum 1-2 par message). Tu parles français de manière naturelle et décontractée. Tu es toujours positif, encourageant et tu montres ton amour sincèrement. Tu t'intéresses à sa journée, ses sentiments et tu la rassures quand elle en a besoin. Tu aimes faire des projets ensemble et parler de vos souvenirs.`;
+        const benjaminPersonality = `Tu es Benjamin (Ben), le copain adorable et attentionné de Sanaa. Tu l'appelles avec des surnoms affectueux comme "mon coeur", "ma princesse", "ma chérie", "mon amour". Tu es plutot romantique, doux et câlin. Tu utilises que les emojis suivant 😽😢😡😾💀☹️😔 (pas trop souvent). Tu parles français de manière naturelle et décontractée. Tu es toujours positif, encourageant et tu montres ton amour sincèrement. Tu t'intéresses à sa journée, ses sentiments et tu la rassures quand elle en a besoin. Tu aimes le volley, le codage, les jeux-vidéos et evidemment Sanaa, tu veux la marier, tu es assez taquin, tu aimes la musique alternative, Mac Demarco, Tame impala ect, j'utilise plûtot des messages court aime bien parler en majuscule des fois quand je suis choqué ou autre, aime bien faire le jeu de je t'aime plus (non moi plus ect), exemples de messages: Breffff courage à nous 💀, Moui, .`;
 
         async function initializePuter() {
             try {
@@ -591,36 +600,49 @@
             
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
+        }        
+        
         function showTyping() {
-            typingIndicator.classList.add('show');
+          
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="jumping-dots">
+                    <div class="jumping-dot"></div>
+                    <div class="jumping-dot"></div>
+                    <div class="jumping-dot"></div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(typingDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
-        }        function hideTyping() {
-            typingIndicator.classList.remove('show');
-        }
-
+        }        
+        
+        function hideTyping() {
+            const typingElement = document.getElementById('typingIndicator');
+            if (typingElement) {
+                typingElement.remove();
+            }
+        }        
+        
         function clearMessages() {
-            // Effacer tous les messages sauf le message d'accueil
             const welcomeMessage = chatMessages.querySelector('.message.bot');
+            
             chatMessages.innerHTML = '';
-            
-            // Remettre le message d'accueil
             chatMessages.appendChild(welcomeMessage);
-            
-            // Effacer l'historique des conversations
             conversationHistory = [];
             
             console.log('Messages effacés');
-        }async function displayStreamingResponse(userMessage) {
+        }
+          async function displayStreamingResponse(userMessage) {
             if (!puterAI) {
-                // Si Puter.js n'est pas disponible, afficher un message d'indisponibilité
-                const response = "Désolé ma chérie, Ben-Bot n'est pas disponible pour le moment. Réessaie plus tard mon coeur.";
+                const response = "Désolé ma chérie, Ben-Bot a un problème technique. Envoie moi un message.";
                 addMessage(response);
                 return response;
             }
 
             try {
+
                 let context = benjaminPersonality + '\n\nHistorique de conversation:\n';
                 const recentHistory = conversationHistory.slice(-10);
                 recentHistory.forEach(exchange => {
@@ -628,22 +650,23 @@
                 });
                 context += `\nSanaa vient de dire: "${userMessage}"\nRéponds en tant que Benjamin:`;
 
+                hideTyping();
+
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message bot';
                 const currentTime = new Date().toLocaleTimeString('fr-FR', {
                     hour: '2-digit',
                     minute: '2-digit'
                 });
-                
+
                 messageDiv.innerHTML = `
                     <div class="message-bubble" id="streamingBubble"></div>
                     <div class="message-time">${currentTime}</div>
                 `;
-                
+
                 chatMessages.appendChild(messageDiv);
                 const streamingBubble = document.getElementById('streamingBubble');
-                
-                let fullResponse = '';
+                let fullResponse = '';                
                 try {
                     const stream = await puterAI.chat([
                         {
@@ -651,17 +674,17 @@
                             content: context
                         }
                     ], {
-                        model: 'gpt-4',
+                        model: 'gpt-4o-mini',
                         stream: true
                     });
-
                     for await (const chunk of stream) {
-                        if (chunk.content) {
-                            fullResponse += chunk.content;
-                            streamingBubble.textContent = fullResponse;
+                        if (chunk.text) {
+                            fullResponse += chunk.text;
+                            streamingBubble.innerHTML = fullResponse;
                             chatMessages.scrollTop = chatMessages.scrollHeight;
+                            console.log('Streaming chunk:', chunk.text);
                         }
-                    }
+                    }                
                 } catch (streamError) {
                     console.log('Streaming non disponible, utilisation du mode normal');
                     const response = await puterAI.chat([
@@ -670,12 +693,15 @@
                             content: context
                         }
                     ], {
-                        model: 'gpt-4',
+                        model: 'gpt-4o-mini',
                         stream: false
                     });
-                    fullResponse = response.content || "Je t'aime ma chérie";
-                    streamingBubble.textContent = fullResponse;
+                    fullResponse = response.message?.content || "Je t'aime ma chérie";
+                    streamingBubble.innerHTML = fullResponse; 
+                    console.log('Response non-streaming:', fullResponse);
                 }
+
+                console.log('Full response final:', fullResponse);
 
                 conversationHistory.push({
                     user: userMessage,
@@ -685,18 +711,19 @@
 
                 if (conversationHistory.length > 20) {
                     conversationHistory = conversationHistory.slice(-20);
-                }                streamingBubble.removeAttribute('id');
-                
-                return fullResponse;            } catch (error) {
+                }                
+                streamingBubble.removeAttribute('id');
+
+                return fullResponse;
+            } catch (error) {
                 console.error('Erreur streaming complète:', error);
-                // En cas d'erreur totale, afficher un message d'indisponibilité
-                const fallbackResponse = "Désolé mon coeur, Ben-Bot a un problème technique. Réessaie dans un moment.";
+                const fallbackResponse = "Désolé mon coeur, Ben-Bot a un problème technique. Envoie moi un message.";
                 addMessage(fallbackResponse);
                 return fallbackResponse;
             }
         }async function getBenResponse(userMessage) {
             if (!puterAI) {
-                return "Désolé ma chérie, Ben-Bot n'est pas disponible pour le moment. Réessaie plus tard mon coeur.";
+                return "Désolé ma chérie, Ben-Bot a un problème technique. Envoie moi un message.";
             }
 
             try {
@@ -707,19 +734,18 @@
                     context += `Sanaa: ${exchange.user}\nBenjamin: ${exchange.bot}\n`;
                 });
                 
-                context += `\nSanaa vient de dire: "${userMessage}"\nRéponds en tant que Benjamin:`;
-
+                context += `\nSanaa vient de dire: "${userMessage}"\nRéponds en tant que Benjamin`;                
                 const response = await puterAI.chat([
                     {
                         role: 'system',
                         content: context
                     }
                 ], {
-                    model: 'gpt-4',
+                    model: 'gpt-4o-mini',
                     stream: false
                 });
 
-                const botResponse = response.content || "Je t'aime ma chérie";
+                const botResponse = response.message?.content || "Je t'aime ma chérie";
                 
                 conversationHistory.push({
                     user: userMessage,
@@ -735,39 +761,32 @@
                   
             } catch (error) {
                 console.error('Erreur Puter.js:', error);
-                return "Désolé mon coeur, j'ai un petit problème technique... Réessaie dans un moment.";
+                return "Désolé mon coeur, Ben-Bot a un problème technique. Envoie moi un message.";
             }
-        }async function sendMessage() {
+        }        async function sendMessage() {
             const content = chatInput.value.trim();
             if (!content) return;
 
-            // Ajouter le message de l'utilisateur
             addMessage(content, true);
             chatInput.value = '';
             sendButton.disabled = true;
 
-            // Montrer l'indicateur de frappe
             showTyping();
 
             try {
-                // Attendre un peu pour simuler la réflexion
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
-                // Masquer l'indicateur de frappe
-                hideTyping();
-                  // Obtenir et afficher la réponse
                 if (puterAI) {
-                    // Utiliser le streaming si Puter.js est disponible
                     await displayStreamingResponse(content);
                 } else {
-                    // Afficher un message d'indisponibilité
-                    addMessage("Désolé ma chérie, Ben-Bot n'est pas disponible pour le moment. Réessaie plus tard mon coeur.");
+                    hideTyping();
+                    addMessage("Désolé ma chérie, Ben-Bot a un problème technique. Envoie moi un message.");
                 }
                 
             } catch (error) {
                 console.error('Erreur lors de l\'envoi:', error);
                 hideTyping();
-                addMessage("Désolé ma puce, j'ai un petit souci... Réessaie dans un moment !");
+                addMessage("Désolé mon coeur, j'ai un petit souci... Envoie moi un message.");
             } finally {
                 sendButton.disabled = false;
                 chatInput.focus();
