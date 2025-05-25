@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puter.js AI Demo</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .tab-button:hover:not(.active) {
+            background: #e9ecef;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .output {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            min-height: 100px;
+            white-space: pre-wrap;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+
+        .loading::after {
+            content: '';
+            animation: dots 2s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        .generated-image {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .model-info {
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .stream-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stream-toggle input[type="checkbox"] {
+            width: auto;
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Puter.js AI Playground</h1>
+        
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('text')">💬 Text Generation</button>
+            <button class="tab-button" onclick="switchTab('image')">🎨 Image Generation</button>
+            <button class="tab-button" onclick="switchTab('vision')">👁️ Image Analysis</button>
+        </div>
+
+        <!-- Text Generation Tab -->
+        <div id="text-tab" class="tab-content active">
+            <div class="model-info">
+                <strong>Text Generation:</strong> Generate text using various OpenAI models like GPT-4o, GPT-4.1, o1, o3, and more.
+            </div>
+            
+            <div class="input-group">
+                <label>Select Model:</label>
+                <select id="text-model">
+                    <option value="gpt-4o">GPT-4o</option>
+                    <option value="gpt-4.1">GPT-4.1</option>
+                    <option value="gpt-4.1-mini">GPT-4.1 Mini</option>
+                    <option value="o1-mini">O1 Mini</option>
+                    <option value="o3-mini">O3 Mini</option>
+                    <option value="gpt-4o-mini">GPT-4o Mini</option>
+                </select>
+            </div>
+
+            <div class="stream-toggle">
+                <input type="checkbox" id="stream-mode">
+                <label for="stream-mode">Enable Streaming (for longer responses)</label>
+            </div>
+
+            <div class="input-group">
+                <label>Your Prompt:</label>
+                <textarea id="text-prompt" placeholder="Enter your question or prompt here...">Write a creative short story about a robot learning to paint.</textarea>
+            </div>
+
+            <button onclick="generateText()">Generate Text</button>
+            <button onclick="clearTextOutput()">Clear Output</button>
+
+            <div class="loading" id="text-loading">Generating response</div>
+            <div class="output" id="text-output">Output will appear here...</div>
+        </div>
+
+        <!-- Image Generation Tab -->
+        <div id="image-tab" class="tab-content">
+            <div class="model-info">
+                <strong>Image Generation:</strong> Create stunning images using DALL-E 3 with detailed prompts.
+            </div>
+            
+            <div class="input-group">
+                <label>Image Description:</label>
+                <textarea id="image-prompt" placeholder="Describe the image you want to generate...">A futuristic cityscape at sunset with flying cars and neon lights, cyberpunk style, highly detailed, digital art</textarea>
+            </div>
+
+            <button onclick="generateImage()">Generate Image</button>
+            <button onclick="clearImageOutput()">Clear Output</button>
+
+            <div class="loading" id="image-loading">Generating image</div>
+            <div class="output" id="image-output">Generated image will appear here...</div>
+        </div>
+
+        <!-- Image Analysis Tab -->
+        <div id="vision-tab" class="tab-content">
+            <div class="model-info">
+                <strong>Image Analysis:</strong> Analyze images using GPT-4o Vision. Provide an image URL and ask questions about it.
+            </div>
+            
+            <div class="input-group">
+                <label>Image URL:</label>
+                <input type="url" id="image-url" placeholder="https://example.com/image.jpg" value="https://assets.puter.site/doge.jpeg">
+            </div>
+
+            <div class="input-group">
+                <label>Your Question:</label>
+                <textarea id="vision-prompt" placeholder="What would you like to know about this image?">What do you see in this image? Describe it in detail including colors, objects, mood, and any interesting elements.</textarea>
+            </div>
+
+            <button onclick="analyzeImage()">Analyze Image</button>
+            <button onclick="clearVisionOutput()">Clear Output</button>
+
+            <div class="loading" id="vision-loading">Analyzing image</div>
+            <div class="output" id="vision-output">Analysis will appear here...</div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab and activate button
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Text Generation
+        async function generateText() {
+            const model = document.getElementById('text-model').value;
+            const prompt = document.getElementById('text-prompt').value;
+            const streamMode = document.getElementById('stream-mode').checked;
+            const loading = document.getElementById('text-loading');
+            const output = document.getElementById('text-output');
+            
+            if (!prompt.trim()) {
+                alert('Please enter a prompt!');
+                return;
+            }
+            
+            loading.style.display = 'block';
+            output.textContent = '';
+            
+            try {
+                if (streamMode) {
+                    // Streaming mode
+                    const response = await puter.ai.chat(prompt, { model: model, stream: true });
+                    
+                    for await (const part of response) {
+                        if (part?.text) {
+                            output.textContent += part.text;
+                            output.scrollTop = output.scrollHeight;
+                        }
+                    }
+                } else {
+                    // Regular mode
+                    const response = await puter.ai.chat(prompt, { model: model });
+                    output.textContent = response;
+                }
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Image Generation
+        async function generateImage() {
+            const prompt = document.getElementById('image-prompt').value;
+            const loading = document.getElementById('image-loading');
+            const output = document.getElementById('image-output');
+            
+            if (!prompt.trim()) {
+                alert('Please enter an image description!');
+                return;
+            }
+            
+            loading.style.display = 'block';
+            output.innerHTML = '';
+            
+            try {
+                const imageElement = await puter.ai.txt2img(prompt);
+                imageElement.classList.add('generated-image');
+                output.appendChild(imageElement);
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Image Analysis
+        async function analyzeImage() {
+            const imageUrl = document.getElementById('image-url').value;
+            const prompt = document.getElementById('vision-prompt').value;
+            const loading = document.getElementById('vision-loading');
+            const output = document.getElementById('vision-output');
+            
+            if (!imageUrl.trim() || !prompt.trim()) {
+                alert('Please enter both image URL and your question!');
+                return;
+            }
+            
+            loading.style.display = 'block';
+            output.textContent = '';
+            
+            try {
+                const response = await puter.ai.chat(prompt, imageUrl);
+                output.textContent = response;
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Clear functions
+        function clearTextOutput() {
+            document.getElementById('text-output').textContent = 'Output will appear here...';
+        }
+
+        function clearImageOutput() {
+            document.getElementById('image-output').innerHTML = 'Generated image will appear here...';
+        }
+
+        function clearVisionOutput() {
+            document.getElementById('vision-output').textContent = 'Analysis will appear here...';
+        }
+
+        // Add some example prompts on page load
+        window.addEventListener('load', function() {
+            console.log('Puter.js AI Playground loaded successfully!');
+            console.log('Ready to interact with OpenAI models via Puter.js');
+        });
+    </script>
+</body>
+</html>
