@@ -3,7 +3,7 @@
   "short_name": "Mon Cœur",
   "description": "For My Beautiful Girlfriend",
   "start_url": "/",
-  "display": "standalone";
+  "display": "standalone",
   "orientation": "portrait",
   "icons": [
     {
