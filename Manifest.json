@@ -3,9 +3,7 @@
   "short_name": "Mon Cœur",
   "description": "For My Beautiful Girlfriend",
   "start_url": "/",
-  "display": "standalone",
-  "background_color": "#667eea",
-  "theme_color": "#667eea",
+  "display": "standalone";
   "orientation": "portrait",
   "icons": [
     {
