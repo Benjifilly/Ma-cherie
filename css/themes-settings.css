@@ -1,0 +1,564 @@
+/* ===== Variables CSS globales ===== */
+:root {
+    --theme-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --main-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --user-message-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --bot-message-bg: rgba(255, 255, 255, 0.9);
+}
+
+/* ===== Variables de fonts ===== */
+body.font-default {
+    --main-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body.font-serif {
+    --main-font: Georgia, 'Times New Roman', Times, serif;
+}
+
+body.font-mono {
+    --main-font: 'Courier New', Courier, monospace;
+}
+
+body.font-cursive {
+    --main-font: 'Comic Sans MS', cursive, sans-serif;
+}
+
+body.font-elegant {
+    --main-font: 'Playfair Display', Georgia, serif;
+}
+
+/* Classes de fonts utilitaires */
+.font-default {
+    --main-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.font-serif {
+    --main-font: Georgia, 'Times New Roman', Times, serif;
+}
+
+.font-mono {
+    --main-font: 'Courier New', Courier, monospace;
+}
+
+.font-cursive {
+    --main-font: 'Comic Sans MS', cursive, sans-serif;
+}
+
+.font-elegant {
+    --main-font: 'Playfair Display', Georgia, serif;
+}
+
+/* ===== Variables de thèmes ===== */
+body.theme-default {
+    --theme-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --user-message-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --bot-message-bg: rgba(255, 255, 255, 0.9);
+}
+
+body.theme-yellow {
+    --theme-gradient: linear-gradient(135deg, #b8860b 0%, #8b6914 100%);
+    --user-message-gradient: linear-gradient(135deg, #ffa000 0%, #e65100 100%);
+    --bot-message-bg: rgba(255, 248, 225, 0.9);
+}
+
+body.theme-green {
+    --theme-gradient: linear-gradient(135deg, #2e8b57 0%, #1b5e20 100%);
+    --user-message-gradient: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+    --bot-message-bg: rgba(232, 245, 233, 0.9);
+}
+
+body.theme-pink {
+    --theme-gradient: linear-gradient(135deg, #da578b 0%, #ad226c 100%);
+    --user-message-gradient: linear-gradient(135deg, #e91e63 0%, #ad1457 100%);
+    --bot-message-bg: rgba(252, 228, 236, 0.9);
+}
+
+body.theme-red {
+    --theme-gradient: linear-gradient(135deg, #cc4d4d 0%, #d11a1a 100%);
+    --user-message-gradient: linear-gradient(135deg, #f44336 0%, #c62828 100%);
+    --bot-message-bg: rgba(255, 235, 238, 0.9);
+}
+
+body.theme-beige {
+    --theme-gradient: linear-gradient(135deg, #8d6e63 0%, #5d4037 100%);
+    --user-message-gradient: linear-gradient(135deg, #8d6e63 0%, #6d4c41 100%);
+    --bot-message-bg: rgba(239, 235, 233, 0.9);
+}
+
+body.theme-lavender {
+    --theme-gradient: linear-gradient(135deg, #7b1fa2 0%, #4a148c 100%);
+    --user-message-gradient: linear-gradient(135deg, #9c27b0 0%, #6a1b9a 100%);
+    --bot-message-bg: rgba(243, 229, 245, 0.9);
+}
+
+body.theme-peach {
+    --theme-gradient: linear-gradient(135deg, #ef6c00 0%, #bf360c 100%);
+    --user-message-gradient: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    --bot-message-bg: rgba(255, 243, 224, 0.9);
+}
+
+body.theme-mint {
+    --theme-gradient: linear-gradient(135deg, #00796b 0%, #004d40 100%);
+    --user-message-gradient: linear-gradient(135deg, #009688 0%, #00695c 100%);
+    --bot-message-bg: rgba(224, 242, 241, 0.9);
+}
+
+/* ===== Boutons de thème et paramètres ===== */
+.theme-button {
+    position: fixed;
+    top: calc(40px + env(safe-area-inset-top, 0px));
+    left: 80px; /* Positionné à gauche, à côté du bouton paramètres */
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    visibility: visible;
+}
+
+.theme-button.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.theme-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.settings-button {
+    position: fixed;
+    top: calc(40px + env(safe-area-inset-top, 0px));
+    left: 20px; /* Premier bouton à gauche */
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    visibility: visible;
+}
+
+.settings-button.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.settings-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+/* ===== Modal des thèmes ===== */
+.theme-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.theme-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.theme-modal-content {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(50px);
+    -webkit-backdrop-filter: blur(50px);
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+
+.theme-modal.show .theme-modal-content {
+    transform: scale(1);
+}
+
+.theme-modal-header {
+    margin-bottom: 25px;
+}
+
+.theme-modal-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: #407bbe;
+    margin-bottom: 8px;
+}
+
+.theme-modal-header p {
+    margin: 0;
+    color: #686868;
+    font-size: 0.9rem;
+}
+
+.themes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.theme-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.theme-option:hover {
+    background: rgba(0, 0, 0, 0.05);
+    transform: scale(1.05);
+}
+
+.theme-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-circle.active {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px #4a90e2, 0 4px 15px rgba(74, 144, 226, 0.4);
+}
+
+.theme-circle.gradient {
+    background: linear-gradient(135deg, var(--theme-color-1), var(--theme-color-2));
+}
+
+.theme-name {
+    font-size: 0.8rem;
+    color: #525252;
+    font-weight: 500;
+}
+
+.close-theme-modal-btn {
+    background: rgba(255, 87, 87, 0.8);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-family: var(--main-font); /* Utilise la police sélectionnée */
+}
+
+.close-theme-modal-btn:hover {
+    background: rgba(255, 87, 87, 1);
+    transform: scale(1.05);
+}
+
+/* ===== Modal des paramètres ===== */
+.settings-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.settings-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.settings-modal-content {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+
+.settings-modal.show .settings-modal-content {
+    transform: scale(1);
+}
+
+.settings-modal-header {
+    margin-bottom: 25px;
+}
+
+.settings-modal-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: #407bbe;
+    margin-bottom: 8px;
+}
+
+.settings-modal-header p {
+    margin: 0;
+    color: #686868;
+    font-size: 0.9rem;
+}
+
+.fonts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.font-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 15px 10px;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.font-option:hover {
+    background: rgba(0, 0, 0, 0.05);
+    transform: scale(1.05);
+}
+
+.font-option.active {
+    border-color: #4a90e2;
+    background: rgba(74, 144, 226, 0.1);
+}
+
+.font-preview {
+    font-size: 1.1rem;
+    color: #333;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.font-name {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.close-settings-modal-btn {
+    background: rgba(255, 87, 87, 0.8);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-family: var(--main-font); /* Utilise la police sélectionnée */
+}
+
+.close-settings-modal-btn:hover {
+    background: rgba(255, 87, 87, 1);
+    transform: scale(1.05);
+}
+
+/* ===== Styles des messages adaptés aux thèmes ===== */
+/* Utilisation de spécificité maximale pour s'assurer que les styles s'appliquent */
+body .message.user .message-bubble {
+    background: var(--user-message-gradient) !important;
+    color: white !important;
+}
+
+body .message.bot .message-bubble {
+    background: var(--bot-message-bg) !important;
+    color: #333 !important;
+}
+
+/* Spécificité encore plus élevée pour les messages streamés */
+body .chat-messages .message.bot .message-bubble#streamingBubble,
+body .chat-messages .message.bot .message-bubble {
+    background: var(--bot-message-bg) !important;
+    color: #333 !important;
+}
+
+/* ===== Media queries responsives ===== */
+@media (max-width: 768px) {
+    .theme-button {
+        left: 75px; 
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+
+    .settings-button {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+        left: 20px; /* Premier bouton */
+    }
+}
+
+@media (max-width: 480px) {
+    .theme-button {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+        top: calc(40px + env(safe-area-inset-top));
+        left: 65px; /* Ajusté pour mobile */
+    }
+    
+    .settings-button {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+        top: calc(40px + env(safe-area-inset-top));
+        left: 15px; /* Premier bouton sur mobile */
+    }
+}
+
+/* Ajustements pour PWA standalone */
+@media (display-mode: standalone) {
+    .theme-button,
+    .settings-button {
+        top: calc(15px + env(safe-area-inset-top, 10px));
+    }
+}
+
+/* Ajustements pour orientation paysage sur mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .theme-button {
+        top: calc(10px + env(safe-area-inset-top, 5px));
+        left: 55px; /* Position côte à côte */
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+    
+    .settings-button {
+        top: calc(10px + env(safe-area-inset-top, 5px));
+        left: 15px; /* Premier bouton */
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== Positionnement spécifique pour ben-bot.html (3 boutons) ===== */
+.ben-bot-layout .theme-button {
+    top: calc(30px + env(safe-area-inset-top, 0px));
+    left: 90px; /* À côté du bouton retour */
+    right: auto; /* Annule le positionnement à droite */
+}
+
+.ben-bot-layout .settings-button {
+    top: calc(30px + env(safe-area-inset-top, 0px));
+    left: 150px; /* À droite du bouton thème */
+}
+
+@media (max-width: 768px) {
+    .ben-bot-layout .theme-button {
+        top: calc(39px + env(safe-area-inset-top, 0px));
+        left: 70px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+    
+    .ben-bot-layout .settings-button {
+        top: calc(39px + env(safe-area-inset-top, 0px));
+        left: 120px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .ben-bot-layout .theme-button {
+        top: calc(40px + env(safe-area-inset-top));
+        left: 65px;
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .ben-bot-layout .settings-button {
+        top: calc(40px + env(safe-area-inset-top));
+        left: 110px;
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+    .ben-bot-layout .theme-button {
+        left: 55px;
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+        top: calc(10px + env(safe-area-inset-top, 5px));
+    }
+    
+    .ben-bot-layout .settings-button {
+        left: 95px;
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+        top: calc(10px + env(safe-area-inset-top, 5px));
+    }
+}
