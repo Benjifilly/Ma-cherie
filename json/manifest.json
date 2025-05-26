@@ -2,7 +2,7 @@
   "name": "Mon Cœur",
   "short_name": "Mon Cœur", 
   "description": "For My Beautiful Girlfriend",
-  "start_url": "./index.html",
+  "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
   "scope": "./",
