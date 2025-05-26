@@ -957,8 +957,8 @@
             }
 
             .send-button {
-                width: 35px;
-                height: 35px;
+                width: 80px;
+                height: 40px;
                 font-size: 0.9rem;
             }
 
@@ -982,7 +982,9 @@
             
             .message.bot .message-bubble {
                 margin-right: 15%;
-            }            .clear-button {
+            }            
+            
+            .clear-button {
                 width: 35px;
                 height: 35px;
                 font-size: 0.9rem;
@@ -992,7 +994,9 @@
                 margin-right: 15%;
                 padding: 0 12px;
             }
-        }        @supports (-webkit-touch-callout: none) {
+        }        
+        
+        @supports (-webkit-touch-callout: none) {
             html, body {
                 position: fixed;
                 overflow: hidden;
@@ -1006,7 +1010,6 @@
             }
         }
 
-        /* Améliorations PWA pour iOS */
         @media (display-mode: standalone) {
             .container {
                 padding-top: calc(20px + env(safe-area-inset-top, 0px));
@@ -1022,17 +1025,18 @@
 
             .chat-container {
                 margin-top: calc(30px + env(safe-area-inset-top, 0px));
-                height: calc(100vh - 200px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+                height: calc(100vh - 230px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
             }
         }
 
-        /* Support des safe areas pour iPhone avec encoche */
         body {
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
             padding-left: env(safe-area-inset-left);
             padding-right: env(safe-area-inset-right);
-        }html::before {
+        }
+        
+        html::before {
             content: '';
             position: fixed;
             top: -50vh;
