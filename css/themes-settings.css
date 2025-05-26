@@ -107,7 +107,7 @@ body.theme-mint {
 .theme-button {
     position: fixed;
     top: calc(40px + env(safe-area-inset-top, 0px));
-    left: 80px; /* Positionné à gauche, à côté du bouton paramètres */
+    left: 20px; /* Positionné à gauche, à côté du bouton paramètres */
     width: 50px;
     height: 50px;
     background: rgba(255, 255, 255, 0.15);
@@ -141,7 +141,7 @@ body.theme-mint {
 .settings-button {
     position: fixed;
     top: calc(40px + env(safe-area-inset-top, 0px));
-    left: 20px; /* Premier bouton à gauche */
+    left: 80px; /* Premier bouton à gauche */
     width: 50px;
     height: 50px;
     background: rgba(255, 255, 255, 0.15);
@@ -438,7 +438,7 @@ body .chat-messages .message.bot .message-bubble {
 /* ===== Media queries responsives ===== */
 @media (max-width: 768px) {
     .theme-button {
-        left: 75px; 
+        left: 20px; 
         width: 45px;
         height: 45px;
         font-size: 1.1rem;
@@ -448,7 +448,7 @@ body .chat-messages .message.bot .message-bubble {
         width: 45px;
         height: 45px;
         font-size: 1.1rem;
-        left: 20px; /* Premier bouton */
+        left: 75px; /* Premier bouton */
     }
 }
 
@@ -458,7 +458,7 @@ body .chat-messages .message.bot .message-bubble {
         height: 40px;
         font-size: 1rem;
         top: calc(40px + env(safe-area-inset-top));
-        left: 65px; /* Ajusté pour mobile */
+        left: 15px; /* Ajusté pour mobile */
     }
     
     .settings-button {
@@ -466,7 +466,7 @@ body .chat-messages .message.bot .message-bubble {
         height: 40px;
         font-size: 1rem;
         top: calc(40px + env(safe-area-inset-top));
-        left: 15px; /* Premier bouton sur mobile */
+        left: 65px; /* Premier bouton sur mobile */
     }
 }
 
@@ -482,7 +482,7 @@ body .chat-messages .message.bot .message-bubble {
 @media (max-width: 768px) and (orientation: landscape) {
     .theme-button {
         top: calc(10px + env(safe-area-inset-top, 5px));
-        left: 55px; /* Position côte à côte */
+        left: 15px; /* Position côte à côte */
         width: 35px;
         height: 35px;
         font-size: 0.9rem;
@@ -490,7 +490,7 @@ body .chat-messages .message.bot .message-bubble {
     
     .settings-button {
         top: calc(10px + env(safe-area-inset-top, 5px));
-        left: 15px; /* Premier bouton */
+        left: 55px; /* Premier bouton */
         width: 35px;
         height: 35px;
         font-size: 0.9rem;

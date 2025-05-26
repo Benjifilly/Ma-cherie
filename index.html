@@ -17,13 +17,13 @@
     <link rel="apple-touch-icon" sizes="72x72" href="images/ben_gêné2.png">
     <link rel="apple-touch-icon" sizes="60x60" href="images/ben_gêné2.png">
     <link rel="apple-touch-icon" sizes="57x57" href="images/ben_gêné2.png">
-    <link rel="icon" href="images/ben_gêné2.png" type="image/png">
+    <link rel="icon" href="images/ben_gêné2.png" type="image/png">    
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="theme-color" content="#667eea">    <link rel="manifest" href="json/manifest.json">
+    <meta name="theme-color" content="#667eea">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/themes-settings.css">    <style>
+    <link rel="stylesheet" href="css/themes-settings.css"><style>
         html {
             margin: 0;
             padding: 0;
@@ -1838,12 +1838,25 @@
             const settingsModal = document.getElementById('settingsModal');
             if (settingsModal) {
                 settingsModal.addEventListener('click', function(event) {
-                    if (event.target === this) {
+                    if (event.target === this) {                
                         closeSettingsModal();
                     }
                 });
             }
         });
+
+        // Enregistrement du Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./json/sw.js')
+                    .then(function(registration) {
+                        console.log('SW registered with scope: ', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('SW registration failed: ', error);
+                    });
+            });
+        }
     </script>
 </body>
 </html>
