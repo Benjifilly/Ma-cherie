@@ -106,7 +106,13 @@
             -moz-user-select: none;
             /* Empêcher le zoom sur iOS */
             touch-action: manipulation;
-        }        
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
         
         .lock-screen {
             position: fixed;
@@ -1156,7 +1162,7 @@
             }
 
             .bottom-spacing {
-                padding-bottom: calc(80px + env(safe-area-inset-bottom, 20px));
+                padding-bottom: calc(100px + env(safe-area-inset-bottom, 20px));
             }
         }     
 
