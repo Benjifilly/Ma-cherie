@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-        <link rel="manifest" href="json/manifest.json">
-    <title>Ben-Bot - Pour parler avec ton mari 🤖</title>
+    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Ben-Bot - buhhh</title>
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Ben-Bot">
     <link rel="apple-touch-icon" sizes="180x180" href="images/Ben-Bot.png">
     <link rel="icon" href="images/Ben-Bot.png" type="image/png">    
+    <link rel="manifest" href="json/manifest.json">
     <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://js.puter.com/v2/"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked@9.1.2/marked.min.js"></script>  
@@ -181,7 +183,6 @@
         .header {
             text-align: center;
             margin: 40px 0;
-            margin-top : 80px
             padding: 40px 20px;
             position: relative;
         }
@@ -248,10 +249,13 @@
             justify-content: center;
             z-index: 100;
             text-decoration: none;
-        }        .back-button:hover {
+        }        
+        
+        .back-button:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.1);
-        }        /* Bouton thème */
+        }        
+
         .theme-button {
             position: absolute;
             top: 30px;
@@ -277,7 +281,6 @@
             transform: scale(1.1);
         }
 
-        /* Modal de thèmes */
         .theme-modal {
             position: fixed;
             top: 0;
@@ -492,7 +495,8 @@
             font-size: 0.7rem;
             opacity: 0.7;
             margin-top: 5px;
-        }        /* Input de chat */
+        }        
+        
         .chat-input-container {
             display: flex;
             gap: 10px;
@@ -511,7 +515,7 @@
             padding: 15px 20px;
             font-family: inherit;
             font-size: 1rem;
-            color: #333;
+            color: #ffffff;
             outline: none;
             transition: all 0.3s ease;
         }
@@ -916,20 +920,22 @@
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-
-        @media (max-width: 768px) {
+        }        @media (max-width: 768px) {
             .container {
                 padding: 10px;
+                /* Marge supplémentaire pour PWA */
+                padding-top: env(safe-area-inset-top, 20px);
             }
 
             .header {
                 margin: 20px 0;
                 padding: 20px 10px;
+                /* Marge supplémentaire pour PWA */
+                padding-top: calc(20px + env(safe-area-inset-top, 0px));
             }            
             
             .back-button {
-                top: 20px;
+                top: calc(20px + env(safe-area-inset-top, 0px));
                 left: 20px;
                 width: 40px;
                 height: 40px;
@@ -937,17 +943,23 @@
             }
 
             .theme-button {
-                top: 20px;
+                top: calc(20px + env(safe-area-inset-top, 0px));
                 left: 70px;
                 width: 40px;
                 height: 40px;
                 font-size: 1rem;
             }
 
+            .chat-container {
+                /* Position plus haute pour la barre de recherche sur iPhone */
+                margin-top: calc(20px + env(safe-area-inset-top, 0px));
+                height: calc(100vh - 220px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+            }
+
             .send-button {
-                width: 45px;
-                height: 45px;
-                font-size: 1.1rem;
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
             }
 
             .action-button {
@@ -966,7 +978,7 @@
 
             .message.user .message-bubble {
                 margin-left: 15%;
-            }            
+            }
             
             .message.bot .message-bubble {
                 margin-right: 15%;
@@ -980,9 +992,7 @@
                 margin-right: 15%;
                 padding: 0 12px;
             }
-        }
-
-        @supports (-webkit-touch-callout: none) {
+        }        @supports (-webkit-touch-callout: none) {
             html, body {
                 position: fixed;
                 overflow: hidden;
@@ -994,7 +1004,35 @@
                 -webkit-overflow-scrolling: touch;
                 overscroll-behavior: none;
             }
-        }        html::before {
+        }
+
+        /* Améliorations PWA pour iOS */
+        @media (display-mode: standalone) {
+            .container {
+                padding-top: calc(20px + env(safe-area-inset-top, 0px));
+            }
+            
+            .back-button {
+                top: calc(30px + env(safe-area-inset-top, 0px));
+            }
+            
+            .theme-button {
+                top: calc(30px + env(safe-area-inset-top, 0px));
+            }
+
+            .chat-container {
+                margin-top: calc(30px + env(safe-area-inset-top, 0px));
+                height: calc(100vh - 200px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+            }
+        }
+
+        /* Support des safe areas pour iPhone avec encoche */
+        body {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }html::before {
             content: '';
             position: fixed;
             top: -50vh;
@@ -1690,13 +1728,14 @@ Tu es Benjamin (Ben), le copain attentionné de Sanaa.
                     }
                 });
             }        
-        }, 3000);
-
+        }, 3000);        
+        
         document.addEventListener('touchmove', function(e) {
-            if (e.target.closest('.chat-messages')) {
+            if (e.target.closest('.chat-messages') || e.target.closest('.sticker-modal')) {
                 return;
             }
-            e.preventDefault();        }, { passive: false });
+            e.preventDefault();        
+        }, { passive: false });
     </script>
 
     <div class="sticker-modal" id="stickerModal">

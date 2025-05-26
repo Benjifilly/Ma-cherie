@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="manifest" href="json/manifest.json">
     <title>For My Beautiful Girlfriend</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -19,6 +18,8 @@
     <link rel="apple-touch-icon" sizes="57x57" href="images/ben.png">
     <link rel="icon" href="images/ben.png" type="image/png">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="theme-color" content="#667eea">
     <link rel="manifest" href="json/manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">    <style>
@@ -1084,7 +1085,7 @@
         
         @media (max-width: 768px) {
             .theme-button {
-                top: 40px;
+                top: 20px;
                 right: 20px;
                 width: 40px;
                 height: 40px;
@@ -1135,10 +1136,36 @@
             height: 200vh;
             background: var(--theme-gradient);
             z-index: -1;
-        }
-        
+        }        
         * {
             touch-action: manipulation;
+        }
+
+        /* Améliorations PWA pour iOS */
+        @media (display-mode: standalone) {
+            .container {
+                padding-top: calc(20px + env(safe-area-inset-top, 0px));
+            }
+            
+            .theme-button {
+                top: calc(30px + env(safe-area-inset-top, 0px));
+            }
+
+            .header {
+                margin-top: calc(40px + env(safe-area-inset-top, 0px));
+            }
+        }     
+        
+        body {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+
+        .bottom-spacing {
+            height: 80px;
+            padding-bottom: env(safe-area-inset-bottom, 20px);
         }
     </style>
 </head>
@@ -1211,10 +1238,11 @@
         </div>
         
         <div class="separator"></div>
-        
-        <h2 class="title2">🌸 Sites pour toi 🌸</h2>
+          <h2 class="title2">🌸 Sites pour toi 🌸</h2>
         <div class="sites-grid" id="sitesGrid">
         </div>
+        
+        <div class="bottom-spacing"></div>
 
         <div class="empty-state" id="emptyState" style="display: none;">
             <h3>CALMOS ça arrive !</h3>

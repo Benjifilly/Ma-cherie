@@ -5,6 +5,7 @@
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
+  "scope": "/",
   "icons": [
     {
       "src": "images/ben.png",
@@ -16,6 +17,5 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-    "scope": "/"
   ]
 }
