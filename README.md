@@ -5,15 +5,25 @@ Un site web pour ma femme 😽
 ## Arborescence
 ```
 /
-├── images/
-│   ├── Ben-Bot.png
-│   └── ben.png
-├── json/
-│   └── manifest.json
-├── video/
-│   └── cat-kiss.mp4
 ├── index.html
-└── test.html
+├── ben-bot.html
+├── manifest.json
+├── .nojekyll
+├── README.md
+├── css/
+│   └── themes-settings.css
+├── images/
+│   ├── ben_gene2.png
+│   ├── Ben-Bot.png
+│   ├── ben-interested.png
+│   ├── angry.png
+│   ├── ben_colère.png
+│   ├── ben_gene.png
+│   ├── ben_pensif.png
+│   ├── ben_qui_fixe.png
+│   ├── ben_triste.png
+│   ├── kiss_cat.png
+│   └── la_mere.png
 ```
 
 Le site: [https://benjifilly.github.io/Ma-cherie/](https://benjifilly.github.io/Ma-cherie/)
