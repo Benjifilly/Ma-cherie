@@ -1,15 +1,15 @@
-const CACHE_NAME = 'mon-coeur-v1';
+const CACHE_NAME = 'mon-coeur-v2';
 const urlsToCache = [
   './',
   './index.html',
   './ben-bot.html',
   './css/themes-settings.css',
-  './images/ben_gêné2.png',
+  './images/ben_gene2.png',
   './images/Ben-Bot.png',
   './images/ben-interested.png',
   './images/angry.png',
   './images/ben_colère.png',
-  './images/ben_gêné.png',
+  './images/ben_gene.png',
   './images/ben_pensif.png',
   './images/ben_qui_fixe.png',
   './images/ben_triste.png',
