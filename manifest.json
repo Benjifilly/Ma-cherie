@@ -9,7 +9,8 @@
   "theme_color": "#667eea",
   "background_color": "#667eea",
   "lang": "fr",
-  "dir": "ltr",  "icons": [
+  "dir": "ltr",  
+  "icons": [
     {
       "src": "./images/ben_gene2.png",
       "sizes": "192x192",
