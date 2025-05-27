@@ -30,3 +30,4 @@ Un site web pour ma femme 😽
 ```
 
 Le site: [https://benjifilly.github.io/Ma-cherie/](https://benjifilly.github.io/Ma-cherie/)
+ou : [https://ma-cherie-af625.web.app/index.html](https://ma-cherie-af625.web.app/index.html)

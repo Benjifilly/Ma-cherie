@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ben-Bot - Historique des Conversations</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+    <style>
+        :root {
+            --theme-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --theme-background-color: #1a1a2e;
+            --main-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --success-color: #4ade80;
+            --error-color: #f87171;
+            --warning-color: #fbbf24;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--main-font);
+            background: var(--theme-gradient);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button i {
+            font-size: 18px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .header::before,
+        .header::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--text-primary), transparent);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .header::before {
+            left: calc(50% - 200px);
+        }
+
+        .header::after {
+            right: calc(50% - 200px);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ffffff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .stats-bar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--success-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid var(--text-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            color: var(--error-color);
+            margin: 20px 0;
+        }
+
+        .conversations-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .conversation-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .conversation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .conversation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .conversation-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .conversation-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .expand-button {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            padding: 5px;
+            border-radius: 8px;
+        }
+
+        .expand-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .expand-button.expanded {
+            transform: rotate(180deg);
+        }
+
+        .conversation-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .conversation-content.expanded {
+            max-height: 1000px;
+        }
+
+        .messages-container {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .message.user {
+            background: rgba(102, 126, 234, 0.3);
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            margin-left: 20px;
+        }
+
+        .message.bot {
+            background: rgba(118, 75, 162, 0.3);
+            border: 1px solid rgba(118, 75, 162, 0.5);
+            margin-right: 20px;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+
+        .message-text {
+            line-height: 1.5;
+        }
+
+        .no-conversations {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .no-conversations i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .no-conversations h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .search-bar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .search-input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-icon {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 80px 15px 30px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header::before,
+            .header::after {
+                display: none;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .conversation-card {
+                padding: 20px;
+            }
+
+            .back-button {
+                top: 15px;
+                left: 15px;
+                padding: 10px 14px;
+            }
+
+            .message.user {
+                margin-left: 10px;
+            }
+
+            .message.bot {
+                margin-right: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .conversation-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .conversation-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scrollbar Styling */
+        .messages-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .messages-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <a href="ben-bot.html" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        Retour
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1>Historique des Conversations</h1>
+            <p>Consultez toutes vos conversations avec Ben-Bot</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="total-conversations">0</div>
+                <div class="stat-label">Conversations totales</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="total-messages">0</div>
+                <div class="stat-label">Messages échangés</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="firebase-conversations">0</div>
+                <div class="stat-label">Conversations Firebase</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="local-conversations">0</div>
+                <div class="stat-label">Conversations locales</div>
+            </div>
+        </div>
+
+        <div class="search-bar">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="Rechercher dans les conversations..." id="searchInput">
+        </div>
+
+        <div id="loading" class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Chargement de l'historique...</p>
+        </div>
+
+        <div id="error" class="error-message" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Erreur lors du chargement de l'historique des conversations.</p>
+        </div>
+
+        <div id="conversations-container" class="conversations-grid" style="display: none;"></div>
+
+        <div id="no-conversations" class="no-conversations" style="display: none;">
+            <i class="fas fa-comments"></i>
+            <h3>Aucune conversation trouvée</h3>
+            <p>Commencez une conversation avec Ben-Bot pour voir l'historique ici.</p>
+        </div>
+    </div>   
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js';
+        import { getDatabase, ref, get } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js';// Configuration Firebase (même que Ben-Bot)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMl-qyCmW9deb56wbDmT-Us2y8fQw9OfM",
+            authDomain: "ma-cherie-af625.firebaseapp.com",
+            databaseURL: "https://ma-cherie-af625-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "ma-cherie-af625",
+            storageBucket: "ma-cherie-af625.firebasestorage.app",
+            messagingSenderId: "405191992200",
+            appId: "1:405191992200:web:8b9eda534715074c75d03d",
+            measurementId: "G-F94RGQPDBT"
+        };
+
+        // Initialisation Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        class HistoryDisplay {
+            constructor() {
+                this.conversations = [];
+                this.filteredConversations = [];
+                this.init();
+            }
+
+            async init() {
+                try {
+                    await this.loadConversations();
+                    this.setupEventListeners();
+                    this.updateStats();
+                    this.displayConversations();
+                } catch (error) {
+                    console.error('Erreur lors de l\'initialisation:', error);
+                    this.showError();
+                }
+            }
+
+            async loadConversations() {
+                const loadingEl = document.getElementById('loading');
+                loadingEl.style.display = 'flex';
+
+                try {
+                    // Charger les conversations Firebase
+                    const firebaseConversations = await this.loadFirebaseConversations();
+                    
+                    // Charger les conversations locales
+                    const localConversations = this.loadLocalConversations();
+
+                    // Combiner et trier les conversations
+                    this.conversations = [...firebaseConversations, ...localConversations]
+                        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                    this.filteredConversations = [...this.conversations];
+
+                } catch (error) {
+                    console.error('Erreur lors du chargement:', error);
+                    throw error;
+                } finally {
+                    loadingEl.style.display = 'none';
+                }
+            }
+
+            async loadFirebaseConversations() {
+                try {
+                    const sessionId = localStorage.getItem('ben_bot_session_id') || 'default_session';
+                    const conversationsRef = ref(database, `conversations/${sessionId}`);
+                    const snapshot = await get(conversationsRef);
+
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        return Object.entries(data).map(([id, conversation]) => ({
+                            id,
+                            ...conversation,
+                            source: 'firebase',
+                            timestamp: conversation.timestamp || Date.now()
+                        }));
+                    }
+                    return [];
+                } catch (error) {
+                    console.error('Erreur Firebase:', error);
+                    return [];
+                }
+            }
+
+            loadLocalConversations() {
+                try {
+                    const localHistory = JSON.parse(localStorage.getItem('conversationHistory') || '[]');
+                    return localHistory.map((conversation, index) => ({
+                        id: `local_${index}`,
+                        ...conversation,
+                        source: 'local',
+                        timestamp: conversation.timestamp || Date.now()
+                    }));
+                } catch (error) {
+                    console.error('Erreur localStorage:', error);
+                    return [];
+                }
+            }
+
+            setupEventListeners() {
+                const searchInput = document.getElementById('searchInput');
+                searchInput.addEventListener('input', (e) => this.filterConversations(e.target.value));
+            }
+
+            filterConversations(searchTerm) {
+                const term = searchTerm.toLowerCase().trim();
+                
+                if (!term) {
+                    this.filteredConversations = [...this.conversations];
+                } else {
+                    this.filteredConversations = this.conversations.filter(conversation => {
+                        const searchContent = [
+                            conversation.title || '',
+                            ...(conversation.messages || []).map(msg => msg.content || msg.text || '')
+                        ].join(' ').toLowerCase();
+                        
+                        return searchContent.includes(term);
+                    });
+                }
+                
+                this.displayConversations();
+            }
+
+            updateStats() {
+                const totalConversations = this.conversations.length;
+                const firebaseCount = this.conversations.filter(c => c.source === 'firebase').length;
+                const localCount = this.conversations.filter(c => c.source === 'local').length;
+                const totalMessages = this.conversations.reduce((sum, conv) => {
+                    return sum + (conv.messages ? conv.messages.length : 0);
+                }, 0);
+
+                document.getElementById('total-conversations').textContent = totalConversations;
+                document.getElementById('total-messages').textContent = totalMessages;
+                document.getElementById('firebase-conversations').textContent = firebaseCount;
+                document.getElementById('local-conversations').textContent = localCount;
+            }
+
+            displayConversations() {
+                const container = document.getElementById('conversations-container');
+                const noConversationsEl = document.getElementById('no-conversations');
+
+                if (this.filteredConversations.length === 0) {
+                    container.style.display = 'none';
+                    noConversationsEl.style.display = 'block';
+                    return;
+                }
+
+                container.style.display = 'grid';
+                noConversationsEl.style.display = 'none';
+
+                container.innerHTML = this.filteredConversations.map(conversation => 
+                    this.createConversationCard(conversation)
+                ).join('');
+
+                // Ajouter les event listeners pour l'expansion
+                container.querySelectorAll('.conversation-header').forEach(header => {
+                    header.addEventListener('click', () => this.toggleConversation(header));
+                });
+            }
+
+            createConversationCard(conversation) {
+                const date = new Date(conversation.timestamp);
+                const formattedDate = date.toLocaleDateString('fr-FR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const messageCount = conversation.messages ? conversation.messages.length : 0;
+                const title = conversation.title || `Conversation ${conversation.id}`;
+                const sourceIcon = conversation.source === 'firebase' ? 'fas fa-cloud' : 'fas fa-hard-drive';
+                const sourceLabel = conversation.source === 'firebase' ? 'Firebase' : 'Local';
+
+                return `
+                    <div class="conversation-card">
+                        <div class="conversation-header" data-conversation-id="${conversation.id}">
+                            <div class="conversation-info">
+                                <h3>${this.escapeHtml(title)}</h3>
+                                <div class="conversation-meta">
+                                    <span><i class="fas fa-calendar"></i> ${formattedDate}</span>
+                                    <span><i class="fas fa-comments"></i> ${messageCount} messages</span>
+                                    <span><i class="${sourceIcon}"></i> ${sourceLabel}</span>
+                                </div>
+                            </div>
+                            <button class="expand-button">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                        <div class="conversation-content">
+                            <div class="messages-container">
+                                ${this.renderMessages(conversation.messages || [])}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderMessages(messages) {
+                if (!messages || messages.length === 0) {
+                    return '<p style="text-align: center; color: var(--text-secondary); padding: 20px;">Aucun message dans cette conversation</p>';
+                }
+
+                return messages.map(message => {
+                    const isUser = message.role === 'user' || message.sender === 'user';
+                    const senderName = isUser ? 'Vous' : 'Ben-Bot';
+                    const content = message.content || message.text || message.message || '';
+
+                    return `
+                        <div class="message ${isUser ? 'user' : 'bot'}">
+                            <div class="message-sender">${senderName}</div>
+                            <div class="message-text">${this.escapeHtml(content)}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            toggleConversation(header) {
+                const content = header.nextElementSibling;
+                const button = header.querySelector('.expand-button');
+                
+                content.classList.toggle('expanded');
+                button.classList.toggle('expanded');
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            showError() {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        // Initialiser l'affichage de l'historique
+        document.addEventListener('DOMContentLoaded', () => {
+            new HistoryDisplay();
+        });
+    </script>
+</body>
+</html>

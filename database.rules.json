@@ -1,6 +1,12 @@
 {
   "rules": {
-    ".read": false,
-    ".write": false
+    "public_conversations": {
+      ".read": true,
+      ".write": true,
+      ".indexOn": ["timestamp"],
+      "$conversation": {
+        ".validate": "newData.hasChildren(['user', 'bot', 'timestamp', 'date', 'time']) && newData.child('user').isString() && newData.child('bot').isString() && newData.child('timestamp').isString()"
+      }
+    }
   }
 }

@@ -191,6 +191,40 @@ body.theme-mint {
     transform: scale(1.1);
 }
 
+.history-button {
+    position: fixed;
+    top: calc(40px + env(safe-area-inset-top, 0px));
+    left: 140px; /* Troisième bouton à gauche */
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    visibility: visible;
+}
+
+.history-button.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.history-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
 /* ===== Modal des thèmes ===== */
 .theme-modal {
     position: fixed;
@@ -469,6 +503,13 @@ body .chat-messages .message.bot .message-bubble {
         font-size: 1.1rem;
         left: 75px; /* Premier bouton */
     }
+
+    .history-button {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+        left: 130px; /* Troisième bouton */
+    }
     
     /* Espace supplémentaire pour tous les mobiles */
     .bottom-spacing {
@@ -492,6 +533,14 @@ body .chat-messages .message.bot .message-bubble {
         font-size: 1rem;
         top: calc(40px + env(safe-area-inset-top));
         left: 65px; /* Premier bouton sur mobile */
+    }
+
+    .history-button {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+        top: calc(40px + env(safe-area-inset-top));
+        left: 115px; /* Troisième bouton sur mobile */
     }
     
     /* Encore plus d'espace pour les très petits écrans */
@@ -535,9 +584,9 @@ body .chat-messages .message.bot .message-bubble {
         min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 50px);
         padding-bottom: calc(50px + env(safe-area-inset-bottom)); /* Plus d'espace pour iOS keyboard en standalone */
     }
-    
-    .settings-button,
-    .theme-button {
+      .settings-button,
+    .theme-button,
+    .history-button {
         top: calc(30px + env(safe-area-inset-top, 0px));
     }
 
@@ -570,10 +619,17 @@ body .chat-messages .message.bot .message-bubble {
         height: 35px;
         font-size: 0.9rem;
     }
-    
-    .settings-button {
+      .settings-button {
         top: calc(10px + env(safe-area-inset-top, 5px));
         left: 55px; /* Premier bouton */
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+
+    .history-button {
+        top: calc(10px + env(safe-area-inset-top, 5px));
+        left: 95px; /* Troisième bouton */
         width: 35px;
         height: 35px;
         font-size: 0.9rem;
@@ -592,6 +648,11 @@ body .chat-messages .message.bot .message-bubble {
     left: 150px; /* À droite du bouton thème */
 }
 
+.ben-bot-layout .history-button {
+    top: calc(30px + env(safe-area-inset-top, 0px));
+    left: 210px; /* À droite du bouton settings */
+}
+
 @media (max-width: 768px) {
     .ben-bot-layout .theme-button {
         top: calc(39px + env(safe-area-inset-top, 0px));
@@ -600,10 +661,17 @@ body .chat-messages .message.bot .message-bubble {
         height: 40px;
         font-size: 1.1rem;
     }
-    
-    .ben-bot-layout .settings-button {
+      .ben-bot-layout .settings-button {
         top: calc(39px + env(safe-area-inset-top, 0px));
         left: 120px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+
+    .ben-bot-layout .history-button {
+        top: calc(39px + env(safe-area-inset-top, 0px));
+        left: 170px;
         width: 40px;
         height: 40px;
         font-size: 1.1rem;
@@ -617,11 +685,17 @@ body .chat-messages .message.bot .message-bubble {
         width: 40px;
         height: 40px;
         font-size: 1rem;
-    }
-
-    .ben-bot-layout .settings-button {
+    }    .ben-bot-layout .settings-button {
         top: calc(40px + env(safe-area-inset-top));
         left: 110px;
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .ben-bot-layout .history-button {
+        top: calc(40px + env(safe-area-inset-top));
+        left: 155px;
         width: 40px;
         height: 40px;
         font-size: 1rem;
@@ -636,9 +710,16 @@ body .chat-messages .message.bot .message-bubble {
         font-size: 0.9rem;
         top: calc(10px + env(safe-area-inset-top, 5px));
     }
-    
-    .ben-bot-layout .settings-button {
+      .ben-bot-layout .settings-button {
         left: 95px;
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+        top: calc(10px + env(safe-area-inset-top, 5px));
+    }
+
+    .ben-bot-layout .history-button {
+        left: 135px;
         width: 35px;
         height: 35px;
         font-size: 0.9rem;

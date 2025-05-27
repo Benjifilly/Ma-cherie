@@ -22,7 +22,277 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-html.min.js"></script>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-html.min.js"></script>
+      <!-- Firebase SDK v9+ -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+        import { getDatabase, ref, push, onValue, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMl-qyCmW9deb56wbDmT-Us2y8fQw9OfM",
+            authDomain: "ma-cherie-af625.firebaseapp.com",
+            databaseURL: "https://ma-cherie-af625-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "ma-cherie-af625",
+            storageBucket: "ma-cherie-af625.firebasestorage.app",
+            messagingSenderId: "405191992200",
+            appId: "1:405191992200:web:8b9eda534715074c75d03d",
+            measurementId: "G-F94RGQPDBT"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const analytics = getAnalytics(app);
+
+        // Classe pour gérer l'historique des conversations
+        class ConversationHistory {
+            constructor() {
+                this.database = database;
+                this.conversationsRef = ref(database, 'public_conversations');
+                this.isOnline = navigator.onLine;
+                this.setupNetworkListener();
+            }
+
+            setupNetworkListener() {
+                window.addEventListener('online', () => {
+                    this.isOnline = true;
+                    console.log('🔗 Connexion Firebase restaurée');
+                });
+
+                window.addEventListener('offline', () => {
+                    this.isOnline = false;
+                    console.log('📵 Mode hors ligne - sauvegarde locale');
+                });
+            }
+
+            async saveConversation(userMessage, botResponse) {
+                const conversation = {
+                    userMessage: userMessage,
+                    botResponse: botResponse,
+                    timestamp: Date.now(),
+                    date: new Date().toISOString(),
+                    id: Date.now() + '_' + Math.random().toString(36).substr(2, 9)
+                };
+
+                try {
+                    if (this.isOnline) {
+                        // Sauvegarder dans Firebase
+                        await push(this.conversationsRef, conversation);
+                        console.log('💾 Conversation sauvegardée dans Firebase');
+                    } else {
+                        // Sauvegarder localement si hors ligne
+                        this.saveToLocalStorage(conversation);
+                        console.log('💾 Conversation sauvegardée localement (mode hors ligne)');
+                    }
+                } catch (error) {
+                    console.error('❌ Erreur sauvegarde Firebase:', error);
+                    this.saveToLocalStorage(conversation);
+                }
+            }
+
+            saveToLocalStorage(conversation) {
+                try {
+                    const localConversations = JSON.parse(localStorage.getItem('offline_conversations') || '[]');
+                    localConversations.push(conversation);
+                    
+                    // Garder seulement les 50 dernières conversations localement
+                    if (localConversations.length > 50) {
+                        localConversations.splice(0, localConversations.length - 50);
+                    }
+                    
+                    localStorage.setItem('offline_conversations', JSON.stringify(localConversations));
+                } catch (error) {
+                    console.error('❌ Erreur sauvegarde locale:', error);
+                }
+            }
+
+            async getStats() {
+                try {
+                    if (!this.isOnline) {
+                        const localConversations = JSON.parse(localStorage.getItem('offline_conversations') || '[]');
+                        return {
+                            total: localConversations.length,
+                            today: localConversations.filter(c => {
+                                const today = new Date().toDateString();
+                                const convDate = new Date(c.timestamp).toDateString();
+                                return today === convDate;
+                            }).length,
+                            source: 'local'
+                        };
+                    }
+
+                    return new Promise((resolve) => {
+                        onValue(this.conversationsRef, (snapshot) => {
+                            const data = snapshot.val();
+                            if (!data) {
+                                resolve({ total: 0, today: 0, source: 'firebase' });
+                                return;
+                            }
+
+                            const conversations = Object.values(data);
+                            const today = new Date().toDateString();
+                            const todayCount = conversations.filter(c => {
+                                const convDate = new Date(c.timestamp).toDateString();
+                                return today === convDate;
+                            }).length;
+
+                            resolve({
+                                total: conversations.length,
+                                today: todayCount,
+                                source: 'firebase'
+                            });
+                        }, { onlyOnce: true });
+                    });
+                } catch (error) {
+                    console.error('❌ Erreur récupération stats:', error);
+                    return { total: 0, today: 0, source: 'error' };
+                }
+            }
+
+            async loadRecentConversations(limit = 30) {
+                try {
+                    if (!this.isOnline) {
+                        const localConversations = JSON.parse(localStorage.getItem('offline_conversations') || '[]');
+                        return localConversations.slice(-limit);
+                    }
+
+                    return new Promise((resolve) => {
+                        const recentQuery = query(this.conversationsRef, orderByChild('timestamp'), limitToLast(limit));
+                        onValue(recentQuery, (snapshot) => {
+                            const data = snapshot.val();
+                            if (!data) {
+                                resolve([]);
+                                return;
+                            }
+                            
+                            const conversations = Object.entries(data).map(([key, value]) => ({
+                                id: key,
+                                ...value
+                            }));
+                            
+                            resolve(conversations.reverse()); // Plus récent en premier
+                        }, { onlyOnce: true });
+                    });
+                } catch (error) {
+                    console.error('❌ Erreur chargement conversations:', error);
+                    return [];
+                }
+            }
+        }        // Rendre la classe disponible globalement
+        window.ConversationHistory = ConversationHistory;
+        window.firebaseApp = app;
+        window.firebaseDatabase = database;
+
+        // Variable globale pour l'instance d'historique
+        let publicHistory = null;
+
+        // Fonctions globales Firebase
+        function initializeFirebaseHistory() {
+            try {
+                publicHistory = new ConversationHistory();
+                console.log('✅ Historique Firebase initialisé');
+                return true;
+            } catch (error) {
+                console.error('❌ Erreur initialisation Firebase:', error);
+                return false;
+            }
+        }
+
+        async function saveConversationToFirebase(userMessage, botResponse) {
+            if (publicHistory) {
+                try {
+                    await publicHistory.saveConversation(userMessage, botResponse);
+                    console.log('💾 Conversation sauvegardée dans Firebase');
+                } catch (error) {
+                    console.error('❌ Erreur sauvegarde Firebase:', error);
+                }
+            }
+        }
+
+        async function loadRecentFirebaseHistory() {
+            if (publicHistory) {
+                try {
+                    const conversations = await publicHistory.loadRecentConversations(30);
+                    console.log(`📚 ${conversations.length} conversations récentes chargées`);
+                    return conversations;
+                } catch (error) {
+                    console.error('❌ Erreur chargement Firebase:', error);
+                    return [];
+                }
+            }
+            return [];
+        }
+
+        async function showFirebaseStats() {
+            if (!publicHistory) {
+                console.log('❌ Firebase non initialisé');
+                return;
+            }
+
+            try {
+                const stats = await publicHistory.getStats();
+                const source = stats.source === 'firebase' ? 'Firebase (en ligne)' : 
+                              stats.source === 'local' ? 'Local (hors ligne)' : 'Erreur';
+                
+                const message = `📊 **Statistiques de l'historique public**\n\n` +
+                              `• **Total des conversations**: ${stats.total}\n` +
+                              `• **Conversations aujourd'hui**: ${stats.today}\n` +
+                              `• **Source**: ${source}`;
+                
+                // Cette fonction sera définie plus tard dans le script
+                if (typeof addMessage === 'function') {
+                    addMessage(message, false);
+                } else {
+                    console.log(message);
+                }
+            } catch (error) {
+                console.error('❌ Erreur récupération statistiques:', error);
+                const errorMessage = "❌ Erreur lors de la récupération des statistiques";
+                if (typeof addMessage === 'function') {
+                    addMessage(errorMessage, false);
+                } else {
+                    console.log(errorMessage);
+                }
+            }
+        }
+
+        // Initialiser Firebase avec retry
+        function initFirebaseWithRetry(maxRetries = 3) {
+            let retryCount = 0;
+            
+            function attemptInit() {
+                const success = initializeFirebaseHistory();
+                if (success) {
+                    console.log('🔥 Firebase v9+ initialisé avec succès');
+                    return;
+                }
+                
+                retryCount++;
+                if (retryCount < maxRetries) {
+                    console.log(`🔄 Tentative ${retryCount + 1}/${maxRetries} d'initialisation Firebase...`);
+                    setTimeout(attemptInit, 2000 * retryCount);
+                } else {
+                    console.log('❌ Échec d\'initialisation Firebase après', maxRetries, 'tentatives');
+                }
+            }
+            
+            attemptInit();
+        }
+
+        // Rendre les fonctions disponibles globalement
+        window.publicHistory = publicHistory;
+        window.initializeFirebaseHistory = initializeFirebaseHistory;
+        window.saveConversationToFirebase = saveConversationToFirebase;
+        window.loadRecentFirebaseHistory = loadRecentFirebaseHistory;
+        window.showFirebaseStats = showFirebaseStats;
+
+        // Initialiser Firebase au chargement
+        initFirebaseWithRetry();
+    </script>
+    
     <style>
 
         html {
@@ -949,7 +1219,7 @@
             
             body {
                 padding-top: env(safe-area-inset-top);
-                padding-bottom: calc(env(safe-area-inset-bottom) + 80px); 
+                padding-bottom: calc(env(safe-area-inset-bottom) + 80px); /* Encore plus d'espace pour le clavier iOS en standalone */
                 padding-left: env(safe-area-inset-left);
                 padding-right: env(safe-area-inset-right);
                 background-color: var(--theme-background-color);
@@ -966,7 +1236,7 @@
             }
             
             .back-button {
-                top: calc(40px + env(safe-area-inset-top, 0px));
+                top: calc(30px + env(safe-area-inset-top, 0px));
             }
             
             .theme-button {
@@ -1005,10 +1275,12 @@
                 <i class="fas fa-arrow-left"></i>
             </a><button class="theme-button" id="themeButton" onclick="openThemeModal()" title="Changer le thème">
                 <i class="fas fa-palette"></i>
+            </button>            <button class="settings-button" id="settingsButton" onclick="openSettingsModal()" title="Paramètres">
+                <i class="fas fa-cog"></i>
             </button>
 
-            <button class="settings-button" id="settingsButton" onclick="openSettingsModal()" title="Paramètres">
-                <i class="fas fa-cog"></i>
+            <button class="history-button" id="historyButton" onclick="openHistoryPage()" title="Historique des conversations">
+                <i class="fas fa-history"></i>
             </button>
 
       
@@ -1029,16 +1301,14 @@
                     <div class="action-button-container">
                         <button class="action-button" id="actionButton" onclick="toggleDropdown()" title="Actions">
                             <i class="fas fa-plus"></i>
-                        </button>                        
-                        <div class="dropdown-menu" id="dropdownMenu">
+                        </button>                        <div class="dropdown-menu" id="dropdownMenu">
                             <div class="dropdown-item" onclick="clearMessages()">
                                 <i class="fas fa-trash"></i>
                                 Effacer la conversation
-                            </div>
-                            <div class="dropdown-item" onclick="openStickerModal()">
+                            </div>                            <div class="dropdown-item" onclick="openStickerModal()">
                                 <i class="fas fa-smile"></i>
                                 Stickers
-                            </div>
+                            </div>                            
                         </div>
                     </div>
                     <input 
@@ -1128,12 +1398,13 @@
             </div>
             <button class="close-settings-modal-btn" onclick="closeSettingsModal()">Fermer</button>
         </div>
-    </div>
-
-    <script>
+    </div>    <script>
         window.addEventListener('load', function() {
             const pageLoadingScreen = document.getElementById('pageLoadingScreen');
             const mainContent = document.getElementById('mainContent');
+            
+            // Initialiser le système d'historique Firebase
+            initializeFirebaseHistory();
             
             setTimeout(() => {
                 pageLoadingScreen.classList.add('fade-out');
@@ -1144,13 +1415,69 @@
                     document.body.style.overflow = 'auto';
                 }, 600);
             }, 2000);
-        });        
+        });
 
         const chatMessages = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
-        const sendButton = document.getElementById('sendButton');
-        let conversationHistory = [];
+        const sendButton = document.getElementById('sendButton');        let conversationHistory = []; // Historique local de la session
         let puterAI = null;
+
+        // Initialiser le système d'historique Firebase
+        async function initializeFirebaseHistory() {
+            try {
+                // Attendre que la classe ConversationHistory soit disponible
+                let attempts = 0;
+                while (!window.ConversationHistory && attempts < 30) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    attempts++;
+                }
+
+                if (window.ConversationHistory) {
+                    publicHistory = new window.ConversationHistory();
+                    console.log('✅ Système d\'historique Firebase initialisé');
+                    
+                    // Charger quelques conversations récentes pour affichage (optionnel)
+                    await loadRecentFirebaseHistory();
+                } else {
+                    console.warn('⚠️ ConversationHistory non disponible, mode local uniquement');
+                }
+            } catch (error) {
+                console.error('❌ Erreur lors de l\'initialisation de l\'historique Firebase:', error);
+            }
+        }
+
+        // Fonction helper pour sauvegarder les conversations dans Firebase
+        async function saveConversationToFirebase(userMessage, botResponse) {
+            if (publicHistory) {
+                try {
+                    await publicHistory.saveConversation(userMessage, botResponse);
+                    console.log('💾 Conversation sauvegardée dans Firebase');
+                } catch (error) {
+                    console.error('❌ Erreur sauvegarde conversation Firebase:', error);
+                }
+            }
+        }
+
+        // Fonction pour charger l'historique récent au démarrage (optionnel)
+        async function loadRecentFirebaseHistory() {
+            if (!publicHistory) return;
+            
+            try {
+                const recentConversations = await publicHistory.loadRecentConversations(3); // Charger les 3 dernières
+                if (recentConversations.length > 0) {
+                    console.log(`📚 ${recentConversations.length} conversations récentes chargées depuis Firebase`);
+                    
+                    // Optionnel: afficher un message indiquant l'historique chargé
+                    // addMessage(`📚 ${recentConversations.length} conversations récentes chargées depuis l'historique public`, false);
+                }            } catch (error) {
+                console.error('❌ Erreur chargement historique Firebase:', error);
+            }
+        }
+
+        // Fonction pour ouvrir la page d'historique
+        function openHistoryPage() {
+            window.open('ben-bot-historique.html', '_blank');
+        }
 
         const benjaminPersonality = `
 Tu es Benjamin (Ben), le copain attentionné de Sanaa.
@@ -1447,9 +1774,7 @@ Tu es Benjamin (Ben), le copain attentionné de Sanaa.
                     }
                 });
             }
-        });
-
-        function sendSticker(imageName, altText) {
+        });        function sendSticker(imageName, altText) {
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message user';
             
@@ -1472,14 +1797,17 @@ Tu es Benjamin (Ben), le copain attentionné de Sanaa.
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
             
+            const userMessage = `[Sticker envoyé: ${altText}]`;
             conversationHistory.push({
-                user: `[Sticker envoyé: ${altText}]`,
+                user: userMessage,
                 bot: ""
             });
             
             closeStickerModal();
-              setTimeout(() => {
-                displayStreamingResponse(`[Sticker envoyé: ${altText}]`);
+              setTimeout(async () => {
+                const botResponse = await displayStreamingResponse(userMessage);
+                // Sauvegarder la conversation dans Firebase après réception de la réponse du bot
+                await saveConversationToFirebase(userMessage, botResponse);
             }, 500);
         }
 
@@ -1524,120 +1852,149 @@ Tu es Benjamin (Ben), le copain attentionné de Sanaa.
                     }
                 });
             }
-        });
-            async function displayStreamingResponse(userMessage) {
+        });            async function displayStreamingResponse(userMessage) {
             if (!puterAI) {
                 const response = "Désolé ma chérie, Ben-Bot a un problème technique. Envoie moi un message.";
                 addMessage(response);
                 return response;
             }
 
-            try {                let context = benjaminPersonality + '\n\nHistorique de conversation:\n';
-                const recentHistory = conversationHistory.slice(-10);
-                recentHistory.forEach(exchange => {
-                    if (exchange.user && exchange.bot !== undefined) {
-                        context += `Sanaa: ${exchange.user}\nBenjamin: ${exchange.bot}\n`;
-                    } else if (exchange.role && exchange.content) {
-                        context += `Sanaa: ${exchange.content}\nBenjamin: \n`;
-                    }
-                });
-                context += `\nSanaa vient de dire: "${userMessage}"\nRéponds en tant que Benjamin:`;                // Garder l'indicateur de frappe pendant 1 seconde supplémentaire avant de commencer le streaming
-                setTimeout(() => {
-                    hideTyping();
-                    
-                    const messageDiv = document.createElement('div');
-                    messageDiv.className = 'message bot';
-                    const currentTime = new Date().toLocaleTimeString('fr-FR', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });messageDiv.innerHTML = `
-                        <div class="message-bubble" id="streamingBubble"></div>
-                        <div id="streamingStickers"></div>
-                        <div class="message-time">${currentTime}</div>
-                    `;
-
-                    chatMessages.appendChild(messageDiv);
-                    const streamingBubble = document.getElementById('streamingBubble');
-                    const streamingStickers = document.getElementById('streamingStickers');
-                    let fullResponse = '';                    
-                    // Démarrer le streaming
-                    (async () => {
-                        try {
-                            const stream = await puterAI.chat([
-                                {
-                                    role: 'system',
-                                    content: context
-                                }
-                            ], {
-                                model: 'gpt-4o-mini',
-                                stream: true
-                            });                            for await (const chunk of stream) {
-                                if (chunk.text) {
-                                    fullResponse += chunk.text;
-                                    // Appliquer le traitement des stickers en temps réel pendant le streaming
-                                    const processed = processMarkdownAndStickers(fullResponse);
-                                    streamingBubble.innerHTML = processed.text;
-                                    streamingStickers.innerHTML = processed.stickers;
-                                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                                    console.log('Streaming chunk:', chunk.text);
-                                }
-                            }                        } catch (streamError) {
-                            console.log('Streaming non disponible, utilisation du mode normal');
-                            const response = await puterAI.chat([
-                                {
-                                    role: 'system',
-                                    content: context
-                                }
-                            ], {
-                                model: 'gpt-4o-mini',
-                                stream: false
-                            });
-                            fullResponse = response.message?.content || "Je t'aime ma chérie";
-                            const processed = processMarkdownAndStickers(fullResponse);
-                            streamingBubble.innerHTML = processed.text;
-                            streamingStickers.innerHTML = processed.stickers;
-                            console.log('Response non-streaming:', fullResponse);
+            return new Promise((resolve, reject) => {
+                try {
+                    let context = benjaminPersonality + '\n\nHistorique de conversation:\n';
+                    const recentHistory = conversationHistory.slice(-30);
+                    recentHistory.forEach(exchange => {
+                        if (exchange.user && exchange.bot !== undefined) {
+                            context += `Sanaa: ${exchange.user}\nBenjamin: ${exchange.bot}\n`;
+                        } else if (exchange.role && exchange.content) {
+                            context += `Sanaa: ${exchange.content}\nBenjamin: \n`;
                         }
+                    });
+                    context += `\nSanaa vient de dire: "${userMessage}"\nRéponds en tant que Benjamin:`;
 
-                        console.log('Full response final:', fullResponse);
+                    // Garder l'indicateur de frappe pendant 1 seconde supplémentaire avant de commencer le streaming
+                    setTimeout(() => {
+                        hideTyping();
+                        
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = 'message bot';
+                        const currentTime = new Date().toLocaleTimeString('fr-FR', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
 
-                        conversationHistory.push({
-                            user: userMessage,
-                            bot: fullResponse,
-                            timestamp: new Date().toISOString()
-                        });                        if (conversationHistory.length > 20) {
-                            conversationHistory = conversationHistory.slice(-20);
-                        }                        
-                        streamingBubble.removeAttribute('id');
-                        streamingStickers.removeAttribute('id');
-                        setTimeout(() => {
-                            if (typeof Prism !== 'undefined') {
-                                Prism.highlightAll();
+                        messageDiv.innerHTML = `
+                            <div class="message-bubble" id="streamingBubble"></div>
+                            <div id="streamingStickers"></div>
+                            <div class="message-time">${currentTime}</div>
+                        `;
+
+                        chatMessages.appendChild(messageDiv);
+                        const streamingBubble = document.getElementById('streamingBubble');
+                        const streamingStickers = document.getElementById('streamingStickers');
+                        let fullResponse = '';
+
+                        // Démarrer le streaming
+                        (async () => {
+                            try {
+                                const stream = await puterAI.chat([
+                                    {
+                                        role: 'system',
+                                        content: context
+                                    }
+                                ], {
+                                    model: 'gpt-4o-mini',
+                                    stream: true
+                                });
+
+                                for await (const chunk of stream) {
+                                    if (chunk.text) {
+                                        fullResponse += chunk.text;
+                                        // Appliquer le traitement des stickers en temps réel pendant le streaming
+                                        const processed = processMarkdownAndStickers(fullResponse);
+                                        streamingBubble.innerHTML = processed.text;
+                                        streamingStickers.innerHTML = processed.stickers;
+                                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                                        console.log('Streaming chunk:', chunk.text);
+                                    }
+                                }
+
+                            } catch (streamError) {
+                                console.log('Streaming non disponible, utilisation du mode normal');
+                                const response = await puterAI.chat([
+                                    {
+                                        role: 'system',
+                                        content: context
+                                    }
+                                ], {
+                                    model: 'gpt-4o-mini',
+                                    stream: false
+                                });
+                                fullResponse = response.message?.content || "Je t'aime ma chérie";
+                                const processed = processMarkdownAndStickers(fullResponse);
+                                streamingBubble.innerHTML = processed.text;
+                                streamingStickers.innerHTML = processed.stickers;
+                                console.log('Response non-streaming:', fullResponse);
                             }
-                            const messageDiv = streamingBubble.closest('.message');
-                            if (messageDiv) {
-                                addCopyButtonsToCodeBlocks(messageDiv);
-                            }
-                        }, 50);
-                    })();
-                }, 1000); // Attendre 1 seconde avant de masquer l'indicateur
 
-                return ""; // Retour temporaire
-            } catch (error) {
-                console.error('Erreur streaming complète:', error);
-                const fallbackResponse = "Désolé mon coeur, Ben-Bot a un problème technique. Envoie moi un message.";
-                hideTyping();
-                addMessage(fallbackResponse);
-                return fallbackResponse;
-            }
-        }async function getBenResponse(userMessage) {
+                            console.log('Full response final:', fullResponse);
+
+                            conversationHistory.push({
+                                user: userMessage,
+                                bot: fullResponse,
+                                timestamp: new Date().toISOString()
+                            });
+
+                            if (conversationHistory.length > 20) {
+                                conversationHistory = conversationHistory.slice(-20);
+                            }
+
+                            // Sauvegarder la conversation dans Firebase
+                            try {
+                                await saveConversationToFirebase(userMessage, fullResponse);
+                            } catch (firebaseError) {
+                                console.error('Erreur sauvegarde Firebase:', firebaseError);
+                            }
+                            
+                            streamingBubble.removeAttribute('id');
+                            streamingStickers.removeAttribute('id');
+                            setTimeout(() => {
+                                if (typeof Prism !== 'undefined') {
+                                    Prism.highlightAll();
+                                }
+                                const messageDiv = streamingBubble.closest('.message');
+                                if (messageDiv) {
+                                    addCopyButtonsToCodeBlocks(messageDiv);
+                                }
+                            }, 50);                            // Résoudre la promesse avec la réponse finale
+                            resolve(fullResponse);
+                        })().catch(error => {
+                            console.error('Erreur dans le streaming:', error);
+                            hideTyping();
+                            const fallbackResponse = "Désolé mon coeur, Ben-Bot a un problème technique. Envoie moi un message.";
+                            addMessage(fallbackResponse);
+                            reject(error);
+                        });
+                    }, 1000); // Attendre 1 seconde avant de masquer l'indicateur
+
+                } catch (error) {
+                    console.error('Erreur streaming complète:', error);
+                    const fallbackResponse = "Désolé mon coeur, Ben-Bot a un problème technique. Envoie moi un message.";
+                    hideTyping();
+                    addMessage(fallbackResponse);
+                    reject(fallbackResponse);
+                }
+            });
+        }
+
+        async function getBenResponse(userMessage) {
             if (!puterAI) {
                 return "Désolé ma chérie, Ben-Bot a un problème technique. Envoie moi un message.";
             }
 
             try {                let context = benjaminPersonality + '\n\nHistorique de conversation:\n';
                 
-                const recentHistory = conversationHistory.slice(-10);
+                const recentHistory = conversationHistory.slice(-30);
                 recentHistory.forEach(exchange => {
                     if (exchange.user && exchange.bot !== undefined) {
                         context += `Sanaa: ${exchange.user}\nBenjamin: ${exchange.bot}\n`;
@@ -1663,10 +2020,15 @@ Tu es Benjamin (Ben), le copain attentionné de Sanaa.
                     user: userMessage,
                     bot: botResponse,
                     timestamp: new Date().toISOString()
-                });
-
-                if (conversationHistory.length > 20) {
+                });                if (conversationHistory.length > 20) {
                     conversationHistory = conversationHistory.slice(-20);
+                }
+
+                // Sauvegarder la conversation dans Firebase
+                try {
+                    await saveConversationToFirebase(userMessage, botResponse);
+                } catch (firebaseError) {
+                    console.error('Erreur sauvegarde Firebase:', firebaseError);
                 }
 
                 return botResponse;
