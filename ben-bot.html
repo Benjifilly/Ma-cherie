@@ -30,6 +30,7 @@
             height: 100%;
             overflow: hidden;
             background: var(--theme-gradient);
+            background-color:var(--theme-background-color);
             background-attachment: fixed;
         }
 
@@ -38,9 +39,12 @@
             padding: 0;
             box-sizing: border-box;
         }        
-          body {
+          
+        
+        body {
             font-family: var(--main-font);
             background: var(--theme-gradient);
+            background-color: var(--theme-background-color);
             background-attachment: fixed;
             min-height: 100vh;
             height: 100%;
@@ -52,7 +56,9 @@
             top: 0;
             left: 0;
             touch-action: pan-y; /* Permet le scroll vertical sur mobile */
-        }        html, body {
+        }        
+        
+        html, body {
             height: 100%;
             width: 100%;
             overflow-x: hidden; /* Empêche le scroll horizontal seulement */
@@ -866,7 +872,8 @@
                 padding: 0 !important;
             }
         }        
-          @supports (-webkit-touch-callout: none) {
+          
+        @supports (-webkit-touch-callout: none) {
             html, body {
                 position: relative; /* Changé de fixed à relative */
                 overflow-x: hidden; /* Empêche seulement le scroll horizontal */
@@ -901,28 +908,30 @@
                 width: 100%;
                 top: 0;
                 left: 0;
-                background-color: transparent;
+                background-color: var(--theme-background-color);
                 background: var(--theme-gradient);
             }
             
             body {
                 padding-top: env(safe-area-inset-top);
-                padding-bottom: env(safe-area-inset-bottom);
+                padding-bottom: calc(env(safe-area-inset-bottom) + 50px); /* Plus d'espace pour le clavier iOS */
                 padding-left: env(safe-area-inset-left);
                 padding-right: env(safe-area-inset-right);
+                background-color: var(--theme-background-color);
             }
             
             .container {
                 padding-top: calc(15px + env(safe-area-inset-top, 0px));
-                height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-                height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+                height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 50px);
+                height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 50px);
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
                 position: relative;
+                padding-bottom: calc(50px + env(safe-area-inset-bottom)); /* Plus d'espace en bas */
             }
             
             .back-button {
-                top: calc(25px + env(safe-area-inset-top, 0px));
+                top: calc(30px + env(safe-area-inset-top, 0px));
             }
             
             .theme-button {
@@ -930,27 +939,23 @@
             }
 
             .chat-container {
-                margin: calc(10px + env(safe-area-inset-top, 0px)) 0 15px 0;
-                height: calc(100vh - 190px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+                margin: calc(10px + env(safe-area-inset-top, 0px)) 0 calc(50px + env(safe-area-inset-bottom)) 0; /* Plus de marge en bas */
+                height: calc(100vh - 240px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); /* Plus d'espace */
+                margin-bottom: calc(60px + env(safe-area-inset-bottom)); /* Encore plus d'espace */
             }
             
-            /* Prévention de la bande blanche */
-            .container::after {
-                content: '';
-                display: block;
-                height: env(safe-area-inset-bottom);
-                background: var(--theme-gradient);
-                position: sticky;
-                bottom: 0;
-                width: 100%;
+            /* Espace supplémentaire pour éviter les problèmes de clavier iOS */
+            .chat-input-container {
+                margin-bottom: calc(20px + env(safe-area-inset-bottom));
             }
-        }        
+        }
         
         body {
             padding-top: calc(20px + env(safe-area-inset-top));
             padding-bottom: env(safe-area-inset-bottom);
             padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);        }
+            padding-right: env(safe-area-inset-right);        
+        }
     </style>
     <link rel="stylesheet" href="css/themes-settings.css">
 </head>
