@@ -1,15 +1,15 @@
 // Configuration Firebase pour Ben-Bot
-// Importé dans ben-bot.html pour gérer l'historique des conversations
+// Les clés sensibles sont injectées via GitHub Actions lors du déploiement
 
-// Configuration Firebase (à remplacer par votre propre configuration)
 const firebaseConfig = {
-    apiKey: "your-api-key-here",
-    authDomain: "your-project.firebaseapp.com",
-    databaseURL: "https://your-project-default-rtdb.firebaseio.com/",
-    projectId: "your-project-id",
-    storageBucket: "your-project.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "your-app-id"
+    apiKey: "{{FIREBASE_API_KEY}}", // Sera remplacé par GitHub Actions
+    authDomain: "ma-cherie-af625.firebaseapp.com",
+    databaseURL: "https://ma-cherie-af625-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "ma-cherie-af625",
+    storageBucket: "ma-cherie-af625.firebasestorage.app",
+    messagingSenderId: "405191992200",
+    appId: "1:405191992200:web:8b9eda534715074c75d03d",
+    measurementId: "G-F94RGQPDBT"
 };
 
 // Initialiser Firebase

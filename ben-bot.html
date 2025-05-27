@@ -22,17 +22,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-html.min.js"></script>
-      <!-- Firebase SDK v9+ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-html.min.js"></script>    <!-- Firebase SDK v9+ -->
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
 
-        // Your web app's Firebase configuration
+        // Configuration Firebase sécurisée (clé API injectée lors du déploiement)
         const firebaseConfig = {
-            apiKey: "AIzaSyDMl-qyCmW9deb56wbDmT-Us2y8fQw9OfM",
+            apiKey: "{{FIREBASE_API_KEY}}", // Remplacé par GitHub Actions
             authDomain: "ma-cherie-af625.firebaseapp.com",
             databaseURL: "https://ma-cherie-af625-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "ma-cherie-af625",

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ben-Bot - Historique des Conversations</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+    <link rel="icon" href="images/Ben-Bot.png" type="image/png">
     <style>
         :root {
             --theme-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -458,12 +458,13 @@
             <h3>Aucune conversation trouvée</h3>
             <p>Commencez une conversation avec Ben-Bot pour voir l'historique ici.</p>
         </div>
-    </div>   
-    <script type="module">
+    </div>     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js';
-        import { getDatabase, ref, get } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js';// Configuration Firebase (même que Ben-Bot)
+        import { getDatabase, ref, get } from 'https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js';
+
+        // Configuration Firebase sécurisée (même que Ben-Bot)
         const firebaseConfig = {
-            apiKey: "AIzaSyDMl-qyCmW9deb56wbDmT-Us2y8fQw9OfM",
+            apiKey: "{{FIREBASE_API_KEY}}", // Remplacé par GitHub Actions
             authDomain: "ma-cherie-af625.firebaseapp.com",
             databaseURL: "https://ma-cherie-af625-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "ma-cherie-af625",
