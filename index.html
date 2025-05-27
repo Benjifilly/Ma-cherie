@@ -1552,14 +1552,19 @@
                 binId: atob("NjgzMmQ4MzU4OTYwYzk3OWE1YTBkOTRi")
             },
             saveMode: 'hybrid'
-        };
-
-        let notesData = [];        
+        };        let notesData = [];
+        let lastNotesHash = '';        
 
         async function loadNotesFromOnline() {
             if (CONFIG.saveMode === 'local') {
-                notesData = JSON.parse(localStorage.getItem('romanticNotes') || '[]');
-                displayNotes();
+                const localNotes = JSON.parse(localStorage.getItem('romanticNotes') || '[]');
+                const localHash = JSON.stringify(localNotes);
+                
+                if (localHash !== lastNotesHash) {
+                    notesData = localNotes;
+                    lastNotesHash = localHash;
+                    displayNotes();
+                }
                 return;
             }
 
@@ -1572,18 +1577,38 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    notesData = data.record.notes || [];
+                    const newNotes = data.record.notes || [];
+                    const newHash = JSON.stringify(newNotes);
+                    
+                    // Ne mettre à jour et animer que s'il y a des changements
+                    if (newHash !== lastNotesHash) {
+                        notesData = newNotes;
+                        lastNotesHash = newHash;
+                        displayNotes();
+                    }
                 } else {
                     console.log('Basculement vers le stockage local');
-                    notesData = JSON.parse(localStorage.getItem('romanticNotes') || '[]');
+                    const localNotes = JSON.parse(localStorage.getItem('romanticNotes') || '[]');
+                    const localHash = JSON.stringify(localNotes);
+                    
+                    if (localHash !== lastNotesHash) {
+                        notesData = localNotes;
+                        lastNotesHash = localHash;
+                        displayNotes();
+                    }
                 }
             } catch (error) {
                 console.log('Mode hors ligne activé:', error.message);
-                notesData = JSON.parse(localStorage.getItem('romanticNotes') || '[]');
+                const localNotes = JSON.parse(localStorage.getItem('romanticNotes') || '[]');
+                const localHash = JSON.stringify(localNotes);
+                
+                if (localHash !== lastNotesHash) {
+                    notesData = localNotes;
+                    lastNotesHash = localHash;
+                    displayNotes();
+                }
             }
-
-            displayNotes();
-        }        
+        }
 
         async function saveNotesToOnline() {
             localStorage.setItem('romanticNotes', JSON.stringify(notesData));
@@ -1649,10 +1674,11 @@
                     hour: '2-digit',
                     minute: '2-digit'
                 })
-            };
-
-            notesData.unshift(newNote); 
+            };            notesData.unshift(newNote); 
             noteInput.value = '';
+
+            // Mettre à jour le hash pour éviter le rechargement inutile
+            lastNotesHash = JSON.stringify(notesData);
 
             await saveNotesToOnline();
 
@@ -1687,15 +1713,15 @@
         async function deleteNote(noteId) {
             const noteElement = document.querySelector(`[data-note-id="${noteId}"]`);
             if (noteElement) {
-                noteElement.classList.add('removing');
-
-                setTimeout(async () => {
+                noteElement.classList.add('removing');                setTimeout(async () => {
                     notesData = notesData.filter(note => note.id !== noteId);
+                    lastNotesHash = JSON.stringify(notesData);
                     await saveNotesToOnline();
                     displayNotes();
                 }, 300);
             } else {
                 notesData = notesData.filter(note => note.id !== noteId);
+                lastNotesHash = JSON.stringify(notesData);
                 await saveNotesToOnline();
                 displayNotes();
             }
