@@ -21,6 +21,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">    <meta name="theme-color" content="#667eea">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Kalam:wght@300;400;700&family=Dancing+Script:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/themes-settings.css"><style>
         html {
@@ -409,7 +412,7 @@
 
         .card-image {
             width: 100%;
-            height: 200px;
+            height: 350px;
             background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
             display: flex;
             align-items: center;
@@ -424,6 +427,15 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        /* Background coloré pour les images PNG selon le thème */
+        .card-image img[src$=".png"], 
+        .card-image img[src*=".png"] {
+            background: var(--theme-gradient);
+            background-size: cover;
+            padding: 20px;
+            object-fit: contain;
         }
 
         .placeholder-icon {
@@ -951,7 +963,7 @@
             }
             
             .card-image {
-                height: 150px;
+                height: 200px;
             }
             
             .card-title {
@@ -1242,6 +1254,30 @@
                 <div class="font-option" id="font-option-cursive" onclick="changeFont('cursive')">
                     <div class="font-preview" style="font-family: 'Comic Sans MS', cursive, sans-serif;">Abc</div>
                     <span class="font-name">Amusant</span>
+                </div>
+                <div class="font-option" id="font-option-elegant" onclick="changeFont('elegant')">
+                    <div class="font-preview" style="font-family: 'Playfair Display', Georgia, serif;">Abc</div>
+                    <span class="font-name">Élégant</span>
+                </div>
+                <div class="font-option" id="font-option-modern" onclick="changeFont('modern')">
+                    <div class="font-preview" style="font-family: 'Inter', 'Segoe UI', sans-serif;">Abc</div>
+                    <span class="font-name">Moderne</span>
+                </div>
+                <div class="font-option" id="font-option-handwriting" onclick="changeFont('handwriting')">
+                    <div class="font-preview" style="font-family: 'Kalam', cursive, sans-serif;">Abc</div>
+                    <span class="font-name">Manuscrit</span>
+                </div>
+                <div class="font-option" id="font-option-romantic" onclick="changeFont('romantic')">
+                    <div class="font-preview" style="font-family: 'Dancing Script', cursive, sans-serif;">Abc</div>
+                    <span class="font-name">Romantique</span>
+                </div>
+                <div class="font-option" id="font-option-minimal" onclick="changeFont('minimal')">
+                    <div class="font-preview" style="font-family: 'Poppins', sans-serif;">Abc</div>
+                    <span class="font-name">Minimal</span>
+                </div>
+                <div class="font-option" id="font-option-retro" onclick="changeFont('retro')">
+                    <div class="font-preview" style="font-family: 'Orbitron', monospace;">Abc</div>
+                    <span class="font-name">Rétro</span>
                 </div>
             </div>
             <button class="close-settings-modal-btn" onclick="closeSettingsModal()">Fermer</button>
@@ -1546,6 +1582,14 @@
             "25 Mai 2025"
         );
 
+        addSite(
+            "Date Planner", 
+            "Planifions nos rendez-vous romantiques ensemble 💕",
+            "images/ben_gene2.png", 
+            "date-planner.html", 
+            "25 Juin 2025"
+        );
+
         const CONFIG = {
             api: {
                 key: atob("JDJhJDEwJHQwV1RjSnJ1a2o2Vi5JTS9FR0tnenU5THdKU2FpRXRTTFhEUmZ2QWo3Li95NVJkRXhXQnpT"),
@@ -1783,7 +1827,8 @@
         }        function changeFont(fontName) {
             // Retirer toutes les classes de font
             document.body.classList.remove(
-                'font-default', 'font-serif', 'font-mono', 'font-cursive', 'font-elegant'
+                'font-default', 'font-serif', 'font-mono', 'font-cursive', 'font-elegant',
+                'font-modern', 'font-handwriting', 'font-romantic', 'font-minimal', 'font-retro'
             );
 
             // Ajouter la nouvelle classe de font
@@ -1793,7 +1838,10 @@
             document.querySelectorAll('.font-option').forEach(option => {
                 option.classList.remove('active');
             });
-            document.getElementById(`font-option-${fontName}`).classList.add('active');
+            const targetOption = document.getElementById(`font-option-${fontName}`);
+            if (targetOption) {
+                targetOption.classList.add('active');
+            }
 
             // Sauvegarder le choix avec synchronisation
             saveGlobalSetting('selectedFont', fontName);
@@ -1817,7 +1865,10 @@
 
             // Charger la font
             const savedFont = localStorage.getItem('selectedFont') || 'default';
-            document.body.classList.remove('font-default', 'font-serif', 'font-mono', 'font-cursive', 'font-elegant');
+            document.body.classList.remove(
+                'font-default', 'font-serif', 'font-mono', 'font-cursive', 'font-elegant',
+                'font-modern', 'font-handwriting', 'font-romantic', 'font-minimal', 'font-retro'
+            );
             document.body.classList.add(`font-${savedFont}`);
 
             // Mettre à jour l'interface des fonts
@@ -1833,7 +1884,10 @@
         window.addEventListener('storage', function(e) {
             if (e.key === 'selectedFont') {
                 const newFont = e.newValue || 'default';
-                document.body.classList.remove('font-default', 'font-serif', 'font-mono', 'font-cursive', 'font-elegant');
+                document.body.classList.remove(
+                    'font-default', 'font-serif', 'font-mono', 'font-cursive', 'font-elegant',
+                    'font-modern', 'font-handwriting', 'font-romantic', 'font-minimal', 'font-retro'
+                );
                 document.body.classList.add(`font-${newFont}`);
 
                 // Mettre à jour l'interface si les éléments existent
