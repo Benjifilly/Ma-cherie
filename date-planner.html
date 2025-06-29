@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Kalam:wght@300;400;700&family=Dancing+Script:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/themes-settings.css">
+    <link rel="stylesheet" href="css/modals-unified.css">
     <style>
         * {
             margin: 0;
@@ -139,16 +140,18 @@
             position: relative;
             z-index: 2;
             letter-spacing: 1px;
-            animation: titleGlow 4s ease-in-out infinite alternate;
+            animation: titleGlow 3s ease-in-out infinite alternate;
             filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
         }
 
         @keyframes titleGlow {
             0% {
-                filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
+                filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3)) drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+                transform: scale(1);
             }
             100% {
-                filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3)) drop-shadow(0 0 25px rgba(255, 255, 255, 0.4));
+                filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3)) drop-shadow(0 0 40px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 60px rgba(255, 105, 180, 0.4));
+                transform: scale(1.02);
             }
         }
 
@@ -285,12 +288,6 @@
                 flex-direction: column;
                 gap: 10px;
             }
-            
-            .close-theme-modal-btn,
-            .close-settings-modal-btn {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
         }
 
         /* Animation de pulsation pour les boutons importants */
@@ -335,6 +332,62 @@
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        .section-title-with-refresh {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .refresh-button {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .refresh-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .refresh-button:active {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .refresh-button.spinning {
+            pointer-events: none;
+        }
+
+        .refresh-button.spinning i {
+            animation: spin 1s linear;
+        }
+
+        .refresh-button:disabled {
+            opacity: 0.4;
+            background: rgba(255, 255, 255, 0.05);
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .form-group {
@@ -739,72 +792,6 @@
                 0 6px 20px rgba(139, 92, 246, 0.4),
                 0 4px 15px rgba(0, 0, 0, 0.2),
                 inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        }
-
-        /* Amélioration des boutons de fermeture des modals */
-        .close-theme-modal-btn,
-        .close-settings-modal-btn {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.1) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 12px 24px;
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 
-                0 4px 15px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            margin-top: 20px;
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .close-theme-modal-btn::before,
-        .close-settings-modal-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
-            transition: left 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .close-theme-modal-btn:hover::before,
-        .close-settings-modal-btn:hover::before {
-            left: 100%;
-        }
-
-        .close-theme-modal-btn:hover,
-        .close-settings-modal-btn:hover {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.15) 100%);
-            border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 
-                0 6px 20px rgba(0, 0, 0, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        }
-
-        .close-theme-modal-btn:active,
-        .close-settings-modal-btn:active {
-            box-shadow: 
-                0 2px 8px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
         /* Amélioration du bouton de fermeture du modal d'édition */
@@ -1551,7 +1538,6 @@
 
         .btn-delete:hover {
             background: linear-gradient(135deg, #ff5252, #d32f2f);
-            transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
         }
     </style>
@@ -1628,8 +1614,8 @@
                         <label class="form-label" for="dateProposedBy">Proposé par</label>
                         <select id="dateProposedBy" name="proposedBy" class="form-select" required>
                             <option value="">Qui propose ?</option>
-                            <option value="ben">👨 Ben</option>
-                            <option value="sanaa">👩 Sanaa</option>
+                            <option value="ben">Ben</option>
+                            <option value="sanaa">Sanaa</option>
                         </select>
                     </div>
 
@@ -1642,10 +1628,15 @@
 
             <!-- Section pour voir les rendez-vous -->
             <div class="section-card">
-                <h2 class="section-title">
-                    <i class="fas fa-calendar-heart"></i>
-                    Nos rendez-vous
-                </h2>
+                <div class="section-title-with-refresh">
+                    <h2 class="section-title">
+                        <i class="fas fa-calendar-heart"></i>
+                        Nos rendez-vous
+                    </h2>
+                    <button class="refresh-button" onclick="refreshDates()" title="Actualiser les rendez-vous">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
                 
                 <div class="filter-options" style="margin-bottom: 20px;">
                     <select id="statusFilter" class="form-select" style="margin-bottom: 10px;">
@@ -1671,8 +1662,8 @@
     <div class="theme-modal" id="editModal">
         <div class="theme-modal-content edit-modal-content">
             <div class="theme-modal-header">
-                <h3>Modifier le rendez-vous</h3>
-                <p>Mets à jour les détails de votre rendez-vous 💕</p>
+                <h3>Tu veux le modifier ???</h3>
+                <p>Préviens moi au moins plz 😔</p>
             </div>
             <form id="editForm">
                 <input type="hidden" id="editDateId" name="dateId">
@@ -1774,9 +1765,7 @@
                     <span class="theme-name">Menthe</span>
                 </div>
             </div>            
-            <button class="close-theme-modal-btn" onclick="closeThemeModal()">
-                <i class="fas fa-times"></i>
-            </button>
+            <button class="close-theme-modal-btn" onclick="closeThemeModal()">Fermer</button>
         </div>
     </div>
 
@@ -1788,7 +1777,7 @@
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
                 <h3>Confirmation de suppression</h3>
-                <p>Es-tu sûre de vouloir supprimer ce rendez-vous ?</p>
+                <p>:(</p>
             </div>
             
             <div class="date-preview" id="deletePreview">
@@ -1865,17 +1854,17 @@
     </div>
 
     <script>
-        // Configuration API (même système que les notes)
+        // Configuration API
         const CONFIG = {
             api: {
-                key: atob("JDJhJDEwJHQwV1RjSnJ1a2o2Vi5JTS9FR0tnenU5THdKU2FpRXRTTFhEUmZ2QWo3Li95NVJkRXhXQnpT"),
-                binId: atob("NjgzMmQ4MzU4OTYwYzk3OWE1YTBkOTRi") // On utilisera un champ différent dans le même bin
-            },
-            saveMode: 'hybrid'
+                key: "$2a$10$t0WTcJrukj6V.IM/EGKgzu9LwJSaiEtSLXDRfvAj7./y5RdExWBzS",
+                binId: "68604b998561e97a502da1f5" // bin: "Dates", "https://api.jsonbin.io/v3/b/68604b998561e97a502da1f5/latest"
+            }
         };
 
         let datesData = [];
         let lastDatesHash = '';
+        let refreshCooldown = false;
 
         // Charger les paramètres globaux (thèmes, fonts)
         function loadGlobalSettings() {
@@ -1972,18 +1961,6 @@
 
         // Charger les rendez-vous depuis l'API
         async function loadDatesFromOnline() {
-            if (CONFIG.saveMode === 'local') {
-                const localDates = JSON.parse(localStorage.getItem('datePlannerDates') || '[]');
-                const localHash = JSON.stringify(localDates);
-                
-                if (localHash !== lastDatesHash) {
-                    datesData = localDates;
-                    lastDatesHash = localHash;
-                    displayDates();
-                }
-                return;
-            }
-
             try {
                 const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.api.binId}/latest`, {
                     headers: {
@@ -2002,37 +1979,26 @@
                         displayDates();
                     }
                 } else {
-                    console.log('Basculement vers le stockage local');
-                    const localDates = JSON.parse(localStorage.getItem('datePlannerDates') || '[]');
-                    const localHash = JSON.stringify(localDates);
-                    
-                    if (localHash !== lastDatesHash) {
-                        datesData = localDates;
-                        lastDatesHash = localHash;
-                        displayDates();
-                    }
+                    throw new Error(`Erreur API: ${response.status} ${response.statusText}`);
                 }
             } catch (error) {
-                console.log('Mode hors ligne activé:', error.message);
-                const localDates = JSON.parse(localStorage.getItem('datePlannerDates') || '[]');
-                const localHash = JSON.stringify(localDates);
+                console.error('Erreur lors du chargement des rendez-vous:', error);
+                showNotification('Erreur de connexion à l\'API. Impossible de charger les rendez-vous.', 'error');
                 
-                if (localHash !== lastDatesHash) {
-                    datesData = localDates;
-                    lastDatesHash = localHash;
-                    displayDates();
-                }
+                // Afficher un message d'erreur dans le container
+                const container = document.getElementById('datesContainer');
+                container.innerHTML = `
+                    <div class="no-dates">
+                        <i class="fas fa-exclamation-triangle" style="color: #ff6b6b;"></i>
+                        <h3>Erreur de connexion</h3>
+                        <p>Impossible de charger les rendez-vous depuis l'API</p>
+                    </div>
+                `;
             }
         }
 
         // Sauvegarder les rendez-vous en ligne
         async function saveDatesToOnline() {
-            localStorage.setItem('datePlannerDates', JSON.stringify(datesData));
-
-            if (CONFIG.saveMode === 'local') {
-                return;
-            }
-
             try {
                 // Récupérer d'abord les données existantes pour préserver les notes
                 const currentResponse = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.api.binId}/latest`, {
@@ -2045,12 +2011,14 @@
                 if (currentResponse.ok) {
                     const currentData = await currentResponse.json();
                     existingData = currentData.record || {};
+                } else {
+                    throw new Error(`Erreur lors de la récupération des données: ${currentResponse.status}`);
                 }
 
                 // Mettre à jour seulement le champ dates
                 existingData.dates = datesData;
 
-                await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.api.binId}`, {
+                const saveResponse = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.api.binId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2058,8 +2026,14 @@
                     },
                     body: JSON.stringify(existingData)
                 });
+
+                if (!saveResponse.ok) {
+                    throw new Error(`Erreur lors de la sauvegarde: ${saveResponse.status} ${saveResponse.statusText}`);
+                }
             } catch (error) {
-                console.log('Sauvegarde en ligne échouée, données sécurisées localement:', error.message);
+                console.error('Erreur lors de la sauvegarde des rendez-vous:', error);
+                showNotification('Erreur de connexion à l\'API. Impossible de sauvegarder les rendez-vous.', 'error');
+                throw error; // Re-throw pour que les fonctions appelantes puissent gérer l'erreur
             }
         }
 
@@ -2089,8 +2063,8 @@
                 container.innerHTML = `
                     <div class="no-dates">
                         <i class="fas fa-calendar-heart"></i>
-                        <h3>Aucun rendez-vous</h3>
-                        <p>Proposez votre premier rendez-vous romantique ! 💕</p>
+                        <h3>Pas de rendez-vous :(</h3>
+                        <p>Plzzzzz propose 🙏</p>
                     </div>
                 `;
                 return;
@@ -2151,9 +2125,11 @@
                     
                     <div class="date-actions">
                         ${getActionButtons(date)}
-                        <button class="btn btn-small btn-calendar" onclick="addToCalendar('${date.id}')">
-                            <i class="fas fa-calendar-plus"></i> Calendrier
-                        </button>
+                        ${date.status !== 'cancelled' ? `
+                            <button class="btn btn-small btn-calendar" onclick="addToCalendar('${date.id}')">
+                                <i class="fas fa-calendar-plus"></i> Calendrier
+                            </button>
+                        ` : ''}
                     </div>
                 </div>
             `;
@@ -2181,6 +2157,14 @@
                     </button>
                     <button class="btn btn-small btn-reject" onclick="rejectDate('${date.id}')">
                         <i class="fas fa-times"></i> Refuser
+                    </button>
+                `;
+            }
+            
+            if (date.status === 'cancelled') {
+                buttons += `
+                    <button class="btn btn-small btn-confirm" onclick="reactivateDate('${date.id}')">
+                        <i class="fas fa-redo"></i> Réactiver
                     </button>
                 `;
             }
@@ -2230,24 +2214,38 @@
                 createdAt: new Date().toISOString()
             };
 
-            datesData.unshift(newDate);
-            lastDatesHash = JSON.stringify(datesData);
-            
-            await saveDatesToOnline();
-            displayDates();
-            
-            showNotification('Rendez-vous proposé avec succès ! 💕');
+            try {
+                datesData.unshift(newDate);
+                lastDatesHash = JSON.stringify(datesData);
+                
+                await saveDatesToOnline();
+                displayDates();
+                
+                showNotification('Rendez-vous proposé avec succès ! 💕');
+            } catch (error) {
+                // Retirer le rendez-vous de la liste en cas d'erreur
+                datesData = datesData.filter(d => d.id !== newDate.id);
+                displayDates();
+            }
         }
 
         // Confirmer un rendez-vous
         async function confirmDate(dateId) {
             const dateIndex = datesData.findIndex(d => d.id === dateId);
             if (dateIndex !== -1) {
-                datesData[dateIndex].status = 'confirmed';
-                lastDatesHash = JSON.stringify(datesData);
-                await saveDatesToOnline();
-                displayDates();
-                showNotification('Rendez-vous confirmé ! 🎉');
+                const originalStatus = datesData[dateIndex].status;
+                
+                try {
+                    datesData[dateIndex].status = 'confirmed';
+                    lastDatesHash = JSON.stringify(datesData);
+                    await saveDatesToOnline();
+                    displayDates();
+                    showNotification('Rendez-vous confirmé ! 🎉');
+                } catch (error) {
+                    // Restaurer le statut original en cas d'erreur
+                    datesData[dateIndex].status = originalStatus;
+                    displayDates();
+                }
             }
         }
 
@@ -2255,11 +2253,39 @@
         async function rejectDate(dateId) {
             const dateIndex = datesData.findIndex(d => d.id === dateId);
             if (dateIndex !== -1) {
-                datesData[dateIndex].status = 'cancelled';
-                lastDatesHash = JSON.stringify(datesData);
-                await saveDatesToOnline();
-                displayDates();
-                showNotification('Rendez-vous refusé.', 'warning');
+                const originalStatus = datesData[dateIndex].status;
+                
+                try {
+                    datesData[dateIndex].status = 'cancelled';
+                    lastDatesHash = JSON.stringify(datesData);
+                    await saveDatesToOnline();
+                    displayDates();
+                    showNotification('Rendez-vous refusé.', 'warning');
+                } catch (error) {
+                    // Restaurer le statut original en cas d'erreur
+                    datesData[dateIndex].status = originalStatus;
+                    displayDates();
+                }
+            }
+        }
+
+        // Réactiver un rendez-vous annulé
+        async function reactivateDate(dateId) {
+            const dateIndex = datesData.findIndex(d => d.id === dateId);
+            if (dateIndex !== -1) {
+                const originalStatus = datesData[dateIndex].status;
+                
+                try {
+                    datesData[dateIndex].status = 'proposed';
+                    lastDatesHash = JSON.stringify(datesData);
+                    await saveDatesToOnline();
+                    displayDates();
+                    showNotification('Rendez-vous réactivé ! 💕', 'success');
+                } catch (error) {
+                    // Restaurer le statut original en cas d'erreur
+                    datesData[dateIndex].status = originalStatus;
+                    displayDates();
+                }
             }
         }
 
@@ -2343,22 +2369,36 @@
             closeDeleteConfirmModal();
             
             const dateElement = document.querySelector(`[data-date-id="${dateId}"]`);
+            const originalDatesData = [...datesData]; // Sauvegarde pour restauration
+            
             if (dateElement) {
                 dateElement.classList.add('removing');
                 
                 setTimeout(async () => {
+                    try {
+                        datesData = datesData.filter(d => d.id !== dateId);
+                        lastDatesHash = JSON.stringify(datesData);
+                        await saveDatesToOnline();
+                        displayDates();
+                        showNotification('Rendez-vous supprimé.', 'warning');
+                    } catch (error) {
+                        // Restaurer les données en cas d'erreur
+                        datesData = originalDatesData;
+                        displayDates();
+                    }
+                }, 300);
+            } else {
+                try {
                     datesData = datesData.filter(d => d.id !== dateId);
                     lastDatesHash = JSON.stringify(datesData);
                     await saveDatesToOnline();
                     displayDates();
                     showNotification('Rendez-vous supprimé.', 'warning');
-                }, 300);
-            } else {
-                datesData = datesData.filter(d => d.id !== dateId);
-                lastDatesHash = JSON.stringify(datesData);
-                await saveDatesToOnline();
-                displayDates();
-                showNotification('Rendez-vous supprimé.', 'warning');
+                } catch (error) {
+                    // Restaurer les données en cas d'erreur
+                    datesData = originalDatesData;
+                    displayDates();
+                }
             }
         }
 
@@ -2423,22 +2463,30 @@
                     return;
                 }
 
-                datesData[dateIndex] = {
-                    ...datesData[dateIndex],
-                    title: title,
-                    date: date,
-                    time: time,
-                    location: location,
-                    category: category,
-                    description: formData.get('description') || '',
-                    updatedAt: new Date().toISOString()
-                };
+                const originalData = { ...datesData[dateIndex] }; // Sauvegarde pour restauration
                 
-                lastDatesHash = JSON.stringify(datesData);
-                await saveDatesToOnline();
-                displayDates();
-                closeEditModal();
-                showNotification('Rendez-vous modifié avec succès !');
+                try {
+                    datesData[dateIndex] = {
+                        ...datesData[dateIndex],
+                        title: title,
+                        date: date,
+                        time: time,
+                        location: location,
+                        category: category,
+                        description: formData.get('description') || '',
+                        updatedAt: new Date().toISOString()
+                    };
+                    
+                    lastDatesHash = JSON.stringify(datesData);
+                    await saveDatesToOnline();
+                    displayDates();
+                    closeEditModal();
+                    showNotification('Rendez-vous modifié avec succès !');
+                } catch (error) {
+                    // Restaurer les données originales en cas d'erreur
+                    datesData[dateIndex] = originalData;
+                    displayDates();
+                }
             }
         }
 
@@ -2464,27 +2512,126 @@
                 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
                 if (isIOS) {
-                    // Utiliser l'URL scheme iOS pour ouvrir l'app Calendrier
-                    const iosUrl = `calshow:${Math.floor(startDate.getTime() / 1000)}`;
+                    // Créer l'URL pour Google Calendar qui marchera aussi sur iOS
+                    const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${formatDate(startDate)}/${formatDate(endDate)}&location=${location}&details=${description}`;
                     
-                    // Essayer d'abord avec l'URL scheme iOS
-                    window.location.href = iosUrl;
+                    // Essayer d'abord d'ouvrir l'app Calendrier native avec un événement spécifique
+                    const calendarData = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Date Planner//EN
+BEGIN:VEVENT
+UID:${date.id}@dateplanner.app
+DTSTART:${formatDate(startDate)}
+DTEND:${formatDate(endDate)}
+SUMMARY:${date.title}
+DESCRIPTION:${date.description || `Rendez-vous romantique proposé par ${date.proposedBy === 'ben' ? 'Ben' : 'Sanaa'}`}
+LOCATION:${date.location}
+END:VEVENT
+END:VCALENDAR`;
+
+                    // Créer un blob et un lien de téléchargement
+                    const blob = new Blob([calendarData], { type: 'text/calendar' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `${date.title.replace(/[^a-z0-9]/gi, '_')}.ics`;
                     
-                    // Si ça ne marche pas, fallback vers Google Calendar
+                    // Tenter l'ouverture directe avec l'app calendrier
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    
+                    // Fallback vers Google Calendar après un petit délai
                     setTimeout(() => {
-                        const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${formatDate(startDate)}/${formatDate(endDate)}&location=${location}&details=${description}`;
                         window.open(googleUrl, '_blank');
-                    }, 1000);
+                    }, 500);
                 } else {
                     // Pour les autres appareils, utiliser Google Calendar
                     const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${formatDate(startDate)}/${formatDate(endDate)}&location=${location}&details=${description}`;
                     window.open(googleUrl, '_blank');
                 }
 
-                showNotification('Ouverture du calendrier...', 'success');
+                showNotification('Ajout au calendrier en cours...', 'success');
             } catch (error) {
                 console.error('Erreur lors de l\'ajout au calendrier:', error);
                 showNotification('Erreur lors de l\'ajout au calendrier', 'error');
+            }
+        }
+
+        // Fonction pour actualiser manuellement les rendez-vous
+        async function refreshDates() {
+            // Vérifier le cooldown pour éviter le spam
+            if (refreshCooldown) {
+                return; // Pas de notification, juste bloquer silencieusement
+            }
+
+            const refreshButton = document.querySelector('.refresh-button');
+            const container = document.getElementById('datesContainer');
+            
+            // Activer le cooldown
+            refreshCooldown = true;
+            
+            // Animation du bouton et désactivation
+            if (refreshButton) {
+                refreshButton.classList.add('spinning');
+                refreshButton.disabled = true;
+            }
+            
+            // Afficher le loading identique au chargement initial
+            if (container) {
+                container.innerHTML = `
+                    <div class="loading-indicator">
+                        <div class="loading-spinner"></div>
+                        <p>Actualisation des rendez-vous...</p>
+                    </div>
+                `;
+            }
+            
+            try {
+                // Rechargement depuis l'API uniquement
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.api.binId}/latest`, {
+                    headers: {
+                        'X-Master-Key': CONFIG.api.key
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const newDates = data.record.dates || [];
+                    datesData = newDates;
+                    lastDatesHash = JSON.stringify(datesData);
+                    displayDates();
+                    showNotification('Rendez-vous actualisés !', 'success');
+                } else {
+                    throw new Error(`Erreur API: ${response.status} ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'actualisation:', error);
+                showNotification('Erreur de connexion à l\'API. Impossible d\'actualiser les rendez-vous.', 'error');
+                
+                // Afficher un message d'erreur dans le container
+                if (container) {
+                    container.innerHTML = `
+                        <div class="no-dates">
+                            <i class="fas fa-exclamation-triangle" style="color: #ff6b6b;"></i>
+                            <h3>Erreur de connexion</h3>
+                            <p>Impossible d'actualiser les rendez-vous depuis l'API</p>
+                        </div>
+                    `;
+                }
+            } finally {
+                if (refreshButton) {
+                    setTimeout(() => {
+                        refreshButton.classList.remove('spinning');
+                        refreshButton.disabled = false;
+                    }, 5000);
+                }
+                
+                // Réactiver le bouton après 5 secondes
+                setTimeout(() => {
+                    refreshCooldown = false;
+                }, 5000);
             }
         }
 
@@ -2493,8 +2640,8 @@
             loadGlobalSettings();
             loadDatesFromOnline();
             
-            // Actualiser toutes les 30 secondes
-            setInterval(loadDatesFromOnline, 30000);
+            // Actualiser toutes les 5 minutes (300 secondes) au lieu de 30 secondes
+            setInterval(loadDatesFromOnline, 300000);
             
             // Définir la date minimum à aujourd'hui
             const today = new Date().toISOString().split('T')[0];

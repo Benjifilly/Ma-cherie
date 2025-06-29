@@ -898,92 +898,64 @@ body .chat-messages .message.bot .message-bubble {
     }
 }
 
-/* ===== Positionnement spécifique pour ben-bot.html (3 boutons) ===== */
+/* ===== Positionnement spécifique pour ben-bot.html (2 boutons seulement) ===== */
 .ben-bot-layout .theme-button {
-    top: calc(30px + env(safe-area-inset-top, 0px));
-    left: 90px; /* À côté du bouton retour */
+    top: calc(40px + env(safe-area-inset-top, 0px));
+    left: 20px; /* Même position que date-planner */
     right: auto; /* Annule le positionnement à droite */
 }
 
 .ben-bot-layout .settings-button {
-    top: calc(30px + env(safe-area-inset-top, 0px));
-    left: 150px; /* À droite du bouton thème */
-}
-
-.ben-bot-layout .history-button {
-    top: calc(30px + env(safe-area-inset-top, 0px));
-    left: 210px; /* À droite du bouton settings */
+    top: calc(40px + env(safe-area-inset-top, 0px));
+    left: 80px; /* Même position que date-planner */
 }
 
 @media (max-width: 768px) {
     .ben-bot-layout .theme-button {
-        top: calc(39px + env(safe-area-inset-top, 0px));
+        top: calc(15px + env(safe-area-inset-top, 0px));
+        left: 15px;
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+    .ben-bot-layout .settings-button {
+        top: calc(15px + env(safe-area-inset-top, 0px));
         left: 70px;
-        width: 40px;
-        height: 40px;
-        font-size: 1.1rem;
-    }
-      .ben-bot-layout .settings-button {
-        top: calc(39px + env(safe-area-inset-top, 0px));
-        left: 120px;
-        width: 40px;
-        height: 40px;
-        font-size: 1.1rem;
-    }
-
-    .ben-bot-layout .history-button {
-        top: calc(39px + env(safe-area-inset-top, 0px));
-        left: 170px;
-        width: 40px;
-        height: 40px;
+        width: 45px;
+        height: 45px;
         font-size: 1.1rem;
     }
 }
 
 @media (max-width: 480px) {
     .ben-bot-layout .theme-button {
-        top: calc(40px + env(safe-area-inset-top));
-        left: 65px;
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
-    }    .ben-bot-layout .settings-button {
-        top: calc(40px + env(safe-area-inset-top));
-        left: 110px;
-        width: 40px;
-        height: 40px;
+        top: calc(15px + env(safe-area-inset-top));
+        left: 15px;
+        width: 45px;
+        height: 45px;
         font-size: 1rem;
     }
-
-    .ben-bot-layout .history-button {
-        top: calc(40px + env(safe-area-inset-top));
-        left: 155px;
-        width: 40px;
-        height: 40px;
+    .ben-bot-layout .settings-button {
+        top: calc(15px + env(safe-area-inset-top));
+        left: 70px;
+        width: 45px;
+        height: 45px;
         font-size: 1rem;
     }
 }
 
 @media (max-width: 768px) and (orientation: landscape) {
     .ben-bot-layout .theme-button {
-        left: 55px;
-        width: 35px;
-        height: 35px;
+        left: 15px;
+        width: 40px;
+        height: 40px;
         font-size: 0.9rem;
         top: calc(10px + env(safe-area-inset-top, 5px));
     }
-      .ben-bot-layout .settings-button {
-        left: 95px;
-        width: 35px;
-        height: 35px;
-        font-size: 0.9rem;
-        top: calc(10px + env(safe-area-inset-top, 5px));
-    }
-
-    .ben-bot-layout .history-button {
-        left: 135px;
-        width: 35px;
-        height: 35px;
+    .ben-bot-layout .settings-button {
+        left: 65px;
+        width: 40px;
+        height: 40px;
         font-size: 0.9rem;
         top: calc(10px + env(safe-area-inset-top, 5px));
     }

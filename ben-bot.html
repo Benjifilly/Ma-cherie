@@ -34,7 +34,7 @@
             padding: 0;
             box-sizing: border-box;
             height: 100%;
-            overflow: hidden;
+            overflow-x: hidden; /* Permet le scroll vertical, empêche seulement le horizontal */
             background: var(--theme-gradient);
             background-color:var(--theme-background-color);
             background-attachment: fixed;
@@ -71,73 +71,12 @@
         }
 
         .page-loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 3000;
-            opacity: 1;
-            transition: opacity 0.6s ease;
-        }
-
-        .page-loading-screen.fade-out {
-            opacity: 0;
-        }
-
-        .page-loading-screen.hidden {
             display: none;
         }        
         
-        .loading-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            animation: SpinContinuous 2.5s ease-in-out infinite;
-            transform-origin: center;
-        }
-
-        @keyframes SpinContinuous {
-            0% {
-                opacity: 0.5;
-                transform: rotate(0deg);
-            }
-            50% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0.5;
-                transform: rotate(360deg);
-            }
-        }
-
-        .loading-text {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 300;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            animation: slideUpFade 0.8s ease-out 0.3s both;
-        }        
-        
-        @keyframes slideUpFade {
-            0% {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         .main-content {
-            opacity: 0;
-            transform: scale(0.95);
-            transition: opacity 0.6s ease, transform 0.6s ease;
+            opacity: 1;
+            transform: scale(1);
             position: absolute;
             top: 0;
             left: 0;
@@ -148,11 +87,6 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        .main-content.show {
-            opacity: 1;
-            transform: scale(1);
-        }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -160,7 +94,7 @@
         }        /* Header */
         .header {
             text-align: center;
-            margin: 20px 0 10px 0;
+            margin: 100px 0 10px 0;
             padding: 20px 20px;
             position: relative;
         }
@@ -209,11 +143,12 @@
 
         .back-button {
             position: fixed;
-            top: 30px;
-            left: 30px;
-            background: rgba(255, 255, 255, 0.1);
+            top: calc(40px + env(safe-area-inset-top, 0px));
+            right: 30px;
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             width: 50px;
             height: 50px;
@@ -224,12 +159,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 100;
+            z-index: 1000;
             text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            opacity: 1;
+            visibility: visible;
         }        
-          .back-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
           .chat-container {
             background: rgba(255, 255, 255, 0.08);
@@ -581,135 +520,8 @@
             width: 16px;
             text-align: center;
         }       
-        .sticker-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .sticker-modal.show {
-            opacity: 1;
-            visibility: visible;
-        }        
         
-        .sticker-modal-content {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border-radius: 20px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-            transform: scale(0.8);
-            transition: transform 0.3s ease;
-            max-width: 320px;
-            max-height: 80vh;
-            width: 90%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sticker-modal.show .sticker-modal-content {
-            transform: scale(1);
-        }
-
-        .sticker-modal-header {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .sticker-modal-header h3 {
-            margin: 0;
-            font-size: 1.2rem;
-            color: #4a90e2;
-        }        .sticker-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-            overflow-y: auto;
-            max-height: 50vh;
-            padding-right: 8px;
-            scrollbar-width: thin;
-        }
-
-        .sticker-grid::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .sticker-grid::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        
-        .sticker-grid::-webkit-scrollbar-thumb {
-            background: rgba(74, 144, 226, 0.6);
-            border-radius: 10px;
-        }
-
-        .sticker-item {
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .sticker-item:hover {
-            border-color: #4a90e2;
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
-        }
-
-        .sticker-item img {
-            width: 60px;
-            height: 60px;
-            object-fit: contain;
-            border-radius: 8px;
-        }
-
-        .sticker-item span {
-            font-size: 0.8rem;
-            color: #666;
-            font-weight: 500;
-        }
-
-        .sticker-modal-footer {
-            text-align: center;
-        }        .close-modal-btn {
-            background: rgba(255, 87, 87, 0.8);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            font-family: var(--main-font); /* Utilise la police sélectionnée */
-        }
-
-        .close-modal-btn:hover {
-            background: rgba(255, 87, 87, 1);
-            transform: scale(1.05);
-        }        /* Sticker dans le chat */
+        /* Sticker dans le chat */
         .message-sticker {
             max-width: 150px;
             height: auto;
@@ -801,25 +613,17 @@
                 padding-bottom: calc(80px + env(safe-area-inset-bottom, 20px)); /* Plus d'espace en bas pour mobile */
             }            
             .header {
-                margin: 40px 0 5px 0;
+                margin: 80px 0 5px 0;
                 padding: 15px 10px;
                 padding-top: calc(30px + env(safe-area-inset-top, 0px)); 
             }
             
             .back-button {
-                top: calc(40px + env(safe-area-inset-top, 0px));
-                left: 20px;
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-            }
-
-            .theme-button {
-                top: calc(40px + env(safe-area-inset-top, 0px));
-                left: 70px;
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
+                top: calc(15px + env(safe-area-inset-top, 0px));
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
             }            
             
             .chat-container {
@@ -930,65 +734,6 @@
             }
         }
         
-        /* Améliorations PWA pour iOS - Correction bande blanche */
-        @media (display-mode: standalone) {
-            html, body {
-                overscroll-behavior: none;
-                touch-action: manipulation;
-                -webkit-user-select: none;
-                user-select: none;
-                height: 100vh;
-                height: 100dvh;
-                min-height: 100vh;
-                min-height: 100dvh;
-                padding: 0;
-                margin: 0;
-                position: fixed;
-                width: 100%;
-                top: 0;
-                left: 0;
-                background-color: var(--theme-background-color);
-                background: var(--theme-gradient);
-            }
-            
-            body {
-                padding-top: env(safe-area-inset-top);
-                padding-bottom: calc(env(safe-area-inset-bottom) + 80px); /* Encore plus d'espace pour le clavier iOS en standalone */
-                padding-left: env(safe-area-inset-left);
-                padding-right: env(safe-area-inset-right);
-                background-color: var(--theme-background-color);
-            }
-            
-            .container {
-                padding-top: calc(15px + env(safe-area-inset-top, 0px));
-                height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 70px);
-                height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 70px);
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-                position: relative;
-                padding-bottom: calc(80px + env(safe-area-inset-bottom)); /* Plus d'espace en bas en standalone */
-            }
-            
-            .back-button {
-                top: calc(30px + env(safe-area-inset-top, 0px));
-            }
-            
-            .theme-button {
-                top: calc(25px + env(safe-area-inset-top, 0px));
-            }
-
-            .chat-container {
-                margin: calc(10px + env(safe-area-inset-top, 0px)) 0 calc(80px + env(safe-area-inset-bottom)) 0; /* Plus de marge en bas en standalone */
-                height: calc(100vh - 280px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); /* Encore plus d'espace en standalone */
-                margin-bottom: calc(100px + env(safe-area-inset-bottom)); /* Maximum d'espace en standalone */
-            }
-            
-            /* Espace supplémentaire pour éviter les problèmes de clavier iOS en standalone */
-            .chat-input-container {
-                margin-bottom: calc(50px + env(safe-area-inset-bottom));
-            }
-        }
-        
         body {
             padding-top: calc(20px + env(safe-area-inset-top));
             padding-bottom: calc(env(safe-area-inset-bottom) + 20px); /* Espace de base pour tous les appareils */
@@ -997,23 +742,21 @@
         }
     </style>
     <link rel="stylesheet" href="css/themes-settings.css">
+    <link rel="stylesheet" href="css/modals-unified.css">
 </head>
 <body class="ben-bot-layout">    
-    <div class="page-loading-screen" id="pageLoadingScreen">
-        <div class="loading-icon">🌸</div>
-        <div class="loading-text">Connexion à Ben-Bot...</div>
-    </div>
-
+    <a href="#" class="back-button" title="Retour à l'accueil" onclick="goBackToIndex()">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    <button class="theme-button" id="themeButton" onclick="openThemeModal()" title="Changer le thème">
+        <i class="fas fa-palette"></i>
+    </button>            
+    <button class="settings-button" id="settingsButton" onclick="openSettingsModal()" title="Paramètres">
+        <i class="fas fa-cog"></i>
+    </button>
     <div class="main-content" id="mainContent">
-        <div class="container">              <a href="#" class="back-button" title="Retour à l'accueil" onclick="goBackToIndex()">
-                <i class="fas fa-arrow-left"></i>
-            </a><button class="theme-button" id="themeButton" onclick="openThemeModal()" title="Changer le thème">
-                <i class="fas fa-palette"></i>
-            </button>            <button class="settings-button" id="settingsButton" onclick="openSettingsModal()" title="Paramètres">
-                <i class="fas fa-cog"></i>
-            </button>
-
-      
+        <div class="container">              
+    
             <header class="header">
                 <h1 class="title">Ben-Bot</h1>
                 <p class="subtitle">Pour parler avec ton mari, tout le temps 😋</p>
@@ -1102,7 +845,9 @@
             </div>            
             <button class="close-theme-modal-btn" onclick="closeThemeModal()">Fermer</button>
         </div>
-    </div>    <div class="settings-modal" id="settingsModal">
+    </div>    
+    
+    <div class="settings-modal" id="settingsModal">
         <div class="settings-modal-content">
             <div class="settings-modal-header">
                 <h3>Paramètres</h3>
@@ -1125,25 +870,34 @@
                     <div class="font-preview" style="font-family: 'Comic Sans MS', cursive, sans-serif;">Abc</div>
                     <span class="font-name">Amusant</span>
                 </div>
+                <div class="font-option" id="font-option-elegant" onclick="changeFont('elegant')">
+                    <div class="font-preview" style="font-family: 'Playfair Display', Georgia, serif;">Abc</div>
+                    <span class="font-name">Élégant</span>
+                </div>
+                <div class="font-option" id="font-option-modern" onclick="changeFont('modern')">
+                    <div class="font-preview" style="font-family: 'Inter', 'Segoe UI', sans-serif;">Abc</div>
+                    <span class="font-name">Moderne</span>
+                </div>
+                <div class="font-option" id="font-option-handwriting" onclick="changeFont('handwriting')">
+                    <div class="font-preview" style="font-family: 'Kalam', cursive, sans-serif;">Abc</div>
+                    <span class="font-name">Manuscrit</span>
+                </div>
+                <div class="font-option" id="font-option-romantic" onclick="changeFont('romantic')">
+                    <div class="font-preview" style="font-family: 'Dancing Script', cursive, sans-serif;">Abc</div>
+                    <span class="font-name">Romantique</span>
+                </div>
+                <div class="font-option" id="font-option-minimal" onclick="changeFont('minimal')">
+                    <div class="font-preview" style="font-family: 'Poppins', sans-serif;">Abc</div>
+                    <span class="font-name">Minimal</span>
+                </div>
+                <div class="font-option" id="font-option-retro" onclick="changeFont('retro')">
+                    <div class="font-preview" style="font-family: 'Orbitron', monospace;">Abc</div>
+                    <span class="font-name">Rétro</span>
+                </div>
             </div>
             <button class="close-settings-modal-btn" onclick="closeSettingsModal()">Fermer</button>
         </div>
     </div>    <script>
-        window.addEventListener('load', function() {
-            const pageLoadingScreen = document.getElementById('pageLoadingScreen');
-            const mainContent = document.getElementById('mainContent');
-            
-            setTimeout(() => {
-                pageLoadingScreen.classList.add('fade-out');
-                
-                setTimeout(() => {
-                    pageLoadingScreen.classList.add('hidden');
-                    mainContent.classList.add('show');
-                    document.body.style.overflow = 'auto';
-                }, 600);
-            }, 2000);
-        });
-
         const chatMessages = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
         const sendButton = document.getElementById('sendButton');        let conversationHistory = []; // Historique local de la session
@@ -1762,7 +1516,7 @@ Tu es Benjamin (Ben), le copain attentionné de Sanaa.
         }        
         
         function changeFont(fontType) {
-            document.body.classList.remove('font-default', 'font-serif', 'font-mono', 'font-cursive', 'font-elegant');
+            document.body.classList.remove('font-default', 'font-serif', 'font-mono', 'font-cursive', 'font-elegant', 'font-modern', 'font-handwriting', 'font-romantic', 'font-minimal', 'font-retro');
             
             document.body.classList.add('font-' + fontType);
             
@@ -1800,7 +1554,7 @@ Tu es Benjamin (Ben), le copain attentionné de Sanaa.
             
             // Charger la font
             const savedFont = localStorage.getItem('selectedFont') || 'default';
-            document.body.classList.remove('font-default', 'font-serif', 'font-mono', 'font-cursive', 'font-elegant');
+            document.body.classList.remove('font-default', 'font-serif', 'font-mono', 'font-cursive', 'font-elegant', 'font-modern', 'font-handwriting', 'font-romantic', 'font-minimal', 'font-retro');
             document.body.classList.add(`font-${savedFont}`);
             
             // Mettre à jour l'interface des fonts avec les bons ID
@@ -1816,7 +1570,7 @@ Tu es Benjamin (Ben), le copain attentionné de Sanaa.
         window.addEventListener('storage', function(e) {
             if (e.key === 'selectedFont') {
                 const newFont = e.newValue || 'default';
-                document.body.classList.remove('font-default', 'font-serif', 'font-mono', 'font-cursive', 'font-elegant');
+                document.body.classList.remove('font-default', 'font-serif', 'font-mono', 'font-cursive', 'font-elegant', 'font-modern', 'font-handwriting', 'font-romantic', 'font-minimal', 'font-retro');
                 document.body.classList.add(`font-${newFont}`);
                 
                 // Mettre à jour l'interface si les éléments existent

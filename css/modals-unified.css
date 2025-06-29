@@ -1,0 +1,531 @@
+/* ================================
+   MODALS UNIFIÉS - TOUS LES APPS
+   ================================ */
+
+/* ===== Styles de base des modals ===== */
+.theme-modal,
+.settings-modal,
+.sticker-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.theme-modal.show,
+.settings-modal.show,
+.sticker-modal.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.theme-modal.closing,
+.settings-modal.closing,
+.sticker-modal.closing {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+}
+
+/* ===== Contenu des modals ===== */
+.theme-modal-content,
+.settings-modal-content,
+.sticker-modal-content {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 35px 30px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    transform: scale(0.8) translateY(80px);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+.theme-modal-content::before,
+.settings-modal-content::before,
+.sticker-modal-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.6), 
+        transparent
+    );
+    z-index: 1;
+}
+
+.theme-modal-content::after,
+.settings-modal-content::after,
+.sticker-modal-content::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    right: 1px;
+    bottom: 1px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 23px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ===== Animations d'entrée ===== */
+.theme-modal.show .theme-modal-content,
+.settings-modal.show .settings-modal-content,
+.sticker-modal.show .sticker-modal-content {
+    transform: scale(1) translateY(0);
+    animation: modalEnter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* ===== Animations de sortie ===== */
+.theme-modal.closing .theme-modal-content,
+.settings-modal.closing .settings-modal-content,
+.sticker-modal.closing .sticker-modal-content {
+    transform: scale(0.7) translateY(-40px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+}
+
+/* ===== Keyframes pour les animations ===== */
+@keyframes modalEnter {
+    0% {
+        transform: scale(0.8) translateY(80px) rotateX(15deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.02) translateY(-10px) rotateX(0deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1) translateY(0) rotateX(0deg);
+        opacity: 1;
+    }
+}
+
+@keyframes modalExit {
+    0% {
+        transform: scale(1) translateY(0) rotateX(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.7) translateY(-40px) rotateX(-10deg);
+        opacity: 0;
+    }
+}
+
+/* ===== En-têtes des modals ===== */
+.theme-modal-header,
+.settings-modal-header,
+.sticker-modal-header {
+    text-align: center;
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 2;
+}
+
+.theme-modal-header h3,
+.settings-modal-header h3,
+.sticker-modal-header h3 {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.theme-modal-header p,
+.settings-modal-header p,
+.sticker-modal-header p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    font-weight: 300;
+}
+
+/* ===== Grilles d'options ===== */
+.themes-grid,
+.fonts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 2;
+}
+
+.theme-option,
+.font-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 15px 10px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-option::before,
+.font-option::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.05);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.theme-option:hover,
+.font-option:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.theme-option:hover::before,
+.font-option:hover::before {
+    opacity: 1;
+}
+
+.theme-option.active,
+.font-option.active {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* ===== Éléments spécifiques thèmes ===== */
+.theme-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.theme-circle.gradient {
+    background: linear-gradient(135deg, var(--theme-color-1), var(--theme-color-2));
+}
+
+.theme-circle.active {
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+.theme-name {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* ===== Éléments spécifiques polices ===== */
+.font-preview {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.font-name {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* ===== Grille de stickers ===== */
+.sticker-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.sticker-item {
+    background: rgba(0, 0, 0, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(5px);
+}
+
+.sticker-item:hover {
+    background: rgba(74, 144, 226, 0.2);
+    border-color: #4a90e2;
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+}
+
+.sticker-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.sticker-item span {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.sticker-item:hover span {
+    color: rgba(255, 255, 255, 1);
+}
+
+.sticker-modal-footer {
+    text-align: center;
+}
+
+/* ===== Boutons de fermeture unifiés ===== */
+.close-theme-modal-btn,
+.close-settings-modal-btn,
+.close-modal-btn {
+    width: 100%;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+    margin-top: 20px;
+}
+
+.close-theme-modal-btn:hover,
+.close-settings-modal-btn:hover,
+.close-modal-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== Barres de défilement ===== */
+.theme-modal-content::-webkit-scrollbar,
+.settings-modal-content::-webkit-scrollbar,
+.sticker-modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.theme-modal-content::-webkit-scrollbar-track,
+.settings-modal-content::-webkit-scrollbar-track,
+.sticker-modal-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.theme-modal-content::-webkit-scrollbar-thumb,
+.settings-modal-content::-webkit-scrollbar-thumb,
+.sticker-modal-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+.theme-modal-content::-webkit-scrollbar-thumb:hover,
+.settings-modal-content::-webkit-scrollbar-thumb:hover,
+.sticker-modal-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .theme-modal-content,
+    .settings-modal-content,
+    .sticker-modal-content {
+        padding: 25px 20px;
+        margin: 20px;
+        max-height: 85vh;
+        width: calc(100% - 40px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .theme-modal-content::-webkit-scrollbar,
+    .settings-modal-content::-webkit-scrollbar,
+    .sticker-modal-content::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .theme-modal-content::-webkit-scrollbar-thumb,
+    .settings-modal-content::-webkit-scrollbar-thumb,
+    .sticker-modal-content::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.4);
+    }
+
+    .themes-grid,
+    .fonts-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .theme-option,
+    .font-option {
+        padding: 12px 8px;
+    }
+
+    .sticker-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    /* Animations plus douces sur mobile */
+    @keyframes modalEnter {
+        0% {
+            transform: scale(0.9) translateY(50px);
+            opacity: 0;
+        }
+        100% {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .theme-modal-content,
+    .settings-modal-content,
+    .sticker-modal-content {
+        margin: 15px;
+        padding: 20px 15px;
+        max-height: 90vh;
+        width: calc(100% - 30px);
+    }
+
+    .themes-grid,
+    .fonts-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .theme-modal-header h3,
+    .settings-modal-header h3,
+    .sticker-modal-header h3 {
+        font-size: 1.4rem;
+    }
+
+    .close-theme-modal-btn,
+    .close-settings-modal-btn,
+    .close-modal-btn {
+        padding: 10px 18px;
+        font-size: 0.95rem;
+    }
+}
+
+/* ===== Améliorations tactiles pour iOS/Android ===== */
+@supports (-webkit-touch-callout: none) {
+    .theme-modal-content,
+    .settings-modal-content,
+    .sticker-modal-content {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+}
+
+/* ===== POLICES HARMONISÉES ===== */
+
+/* Police par défaut (système) */
+body.font-default {
+    --main-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Police serif */
+body.font-serif {
+    --main-font: Georgia, 'Times New Roman', Times, serif;
+}
+
+/* Police monospace */
+body.font-mono {
+    --main-font: 'Courier New', Courier, monospace;
+}
+
+/* Police amusante */
+body.font-cursive {
+    --main-font: 'Comic Sans MS', cursive, sans-serif;
+}
+
+/* Police élégante (Playfair Display) */
+body.font-elegant {
+    --main-font: 'Playfair Display', Georgia, serif;
+}
+
+/* Police moderne (Inter) */
+body.font-modern {
+    --main-font: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* Police manuscrit (Kalam) */
+body.font-handwriting {
+    --main-font: 'Kalam', cursive, sans-serif;
+}
+
+/* Police romantique (Dancing Script) */
+body.font-romantic {
+    --main-font: 'Dancing Script', cursive, sans-serif;
+}
+
+/* Police minimale (Poppins) */
+body.font-minimal {
+    --main-font: 'Poppins', sans-serif;
+}
+
+/* Police rétro (Orbitron) */
+body.font-retro {
+    --main-font: 'Orbitron', monospace;
+}
